@@ -16,7 +16,7 @@
                 </header>
 
                 <div class="card-body">
-                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate>
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data" novalidate>
                         <h5 class="text-center mb-4">Create a new account</h5>
 
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="name@example.com" />
+                            <input asp-for="Input.Email" class ="form-control" autocomplete="email" placeholder="name@example.com" />
                             <label asp-for="Input.Email">Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
@@ -61,7 +61,28 @@
                             <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
-
+                        <!--only for students-->
+                        <div class="form-floating mb-3 d-none" id="collegeField">
+                            <input asp-for="Input.CollegeName" class="form-control" placeholder="College Name"/>
+                            <label asp-for="Input.CollegeName">College Name</label>
+                            <span asp-validation-for="Input.CollegeName" class="text-danger"></span>
+                        </div>
+                        <!--only for employers-->
+                        <div class="form-floating mb-3 d-none" id="businessCer">
+                            <input asp-for="Input.BusinessCertificate" class="form-control" placeholder="Business Certificate" />
+                            <label asp-for="Input.BusinessCertificate">Business Certificate</label>
+                            <span asp-validation-for="Input.BusinessCertificate" class="text-danger"></span>
+                        </div><!--only for mentors-->
+                        <div class="form-floating mb-3 d-none" id="experienceCer">
+                            <input asp-for="Input.ExperienceCertificate" class="form-control" placeholder="College Name" />
+                            <label asp-for="Input.ExperienceCertificate">College Name</label>
+                            <span asp-validation-for="Input.ExperienceCertificate" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3 d-none" id="expertiseField">
+                            <input asp-for="Input.ExpertiseArea" class="form-control" placeholder="Expertise" />
+                            <label asp-for="Input.ExpertiseArea">Expertise</label>
+                            <span asp-validation-for="Input.ExpertiseArea" class="text-danger"></span>
+                        </div>
                         <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg w-100 mb-3">Register</button>
                     </form>
                 </div>
@@ -103,4 +124,40 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleRoleFields() {
+            let role = document.getElementById("roleSelect").value;
+
+            let studentField = document.getElementById("collegeField");
+            let employerField = document.getElementById("businessCer");
+            let mentorField = document.getElementById("experienceCer");
+            let mentorField2 = document.getElementById("expertiseField");            
+
+            switch (role) {
+                case "Student":
+                    studentField.classList.remove("d-none");
+                    employerField.classList.add("d-none");
+                    mentorField.classList.add("d-none");
+                    mentorField2.classList.add("d-none");
+                    break;
+                case "Employer":
+                    studentField.classList.add("d-none");
+                    employerField.classList.remove("d-none");
+                    mentorField.classList.add("d-none");
+                    mentorField2.classList.add("d-none");
+                    break;
+                case "Mentor":
+                    studentField.classList.add("d-none");
+                    employerField.classList.add("d-none");
+                    mentorField.classList.remove("d-none");
+                    mentorField2.classList.remove("d-none");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        document.getElementById("roleSelect").addEventListener("change", toggleRoleFields);
+        window.addEventListener("DOMContentLoaded", toggleRoleFields);
+    </script>
 }
