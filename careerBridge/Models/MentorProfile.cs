@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using careerBridge.Areas.Identity.Data;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace careerBridge.Models
 {
@@ -8,6 +10,11 @@ namespace careerBridge.Models
         [Key]
         public int MentorID { get; set; }  // was string, now int
 
+        [Required]
+        public string UserID { get; set; }
+
+        [ForeignKey("UserID")]
+        public careerBridgeUser User { get; set; }
 
         [Required]
         public string FullName { get; set; } = "";

@@ -173,7 +173,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                         case "Student":
                             _db.Students.Add(new StudentProfile
                             {
-                                
+                                UserID = userId,
                                 FullName = Input.Fullname,
                                 Email = Input.Email,
                                 Phone = Input.Phone,
@@ -187,7 +187,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                                 var cer = Guid.NewGuid().ToString() + Path.GetExtension(Input.BusinessCertificate.FileName);
                                 _db.Employers.Add(new EmployerProfile
                                 {
-
+                                    UserID = userId,
                                     CompanyName = Input.Fullname,
                                     Email = Input.Email,
                                     Phone = Input.Phone,
@@ -201,6 +201,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                             {
                                 _db.Mentors.Add(new MentorProfile
                                 {
+                                    UserID = userId,
                                     FullName = Input.Fullname,
                                     Email = Input.Email,
                                     Phone = Input.Phone,

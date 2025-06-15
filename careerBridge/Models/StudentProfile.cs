@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using careerBridge.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -9,6 +10,12 @@ namespace careerBridge.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)] // Prevent auto-increment
         public int StudentID { get; set; }
+
+        [Required]
+        public string UserID { get; set; }
+
+        [ForeignKey("UserID")]
+        public careerBridgeUser User { get; set; }
 
         [Required, StringLength(100)]
         public string FullName { get; set; } = "";
