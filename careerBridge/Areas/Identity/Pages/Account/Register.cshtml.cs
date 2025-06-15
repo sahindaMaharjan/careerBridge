@@ -155,6 +155,11 @@ namespace careerBridge.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.Fullname = Input.Fullname;
+                user.PhoneNumber = Input.Phone;
+                user.RoleType = Input.Role;
+                user.CreatedAt = DateTime.UtcNow;
+                user.Email = Input.Email;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -185,13 +190,18 @@ namespace careerBridge.Areas.Identity.Pages.Account
                             if (Input.BusinessCertificate != null)
                             {
                                 var cer = Guid.NewGuid().ToString() + Path.GetExtension(Input.BusinessCertificate.FileName);
+                                var file = Path.Combine(_env.WebRootPath,"certificates", cer);
+                              using (var stream = new FileStream(file, FileMode.Create))
+                                {
+                                    await Input.BusinessCertificate.CopyToAsync(stream);
+                                }
                                 _db.Employers.Add(new EmployerProfile
                                 {
                                     UserID = userId,
                                     CompanyName = Input.Fullname,
                                     Email = Input.Email,
                                     Phone = Input.Phone,
-
+                                    BusinessCertificatePath = "/certificates/" + cer
                                 });
                             }
                             break;
@@ -199,13 +209,20 @@ namespace careerBridge.Areas.Identity.Pages.Account
                         case "Mentor":
                         if (Input.ExperienceCertificate != null)
                             {
+                                var cer = Guid.NewGuid().ToString() + Path.GetExtension(Input.ExperienceCertificate.FileName);
+                                var file = Path.Combine(_env.WebRootPath, "certificates", cer);
+                                using (var stream = new FileStream(file, FileMode.Create))
+                                {
+                                    await Input.ExperienceCertificate.CopyToAsync(stream);
+                                }
                                 _db.Mentors.Add(new MentorProfile
                                 {
                                     UserID = userId,
                                     FullName = Input.Fullname,
                                     Email = Input.Email,
                                     Phone = Input.Phone,
-                                    ExpertiseArea = Input.ExpertiseArea
+                                    ExpertiseArea = Input.ExpertiseArea,
+                                    CertificatePath = "/certificates/" + cer
                                 });
                             }
                             break;

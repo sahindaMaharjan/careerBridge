@@ -10,25 +10,24 @@ namespace careerBridge.Models
         [Key]
         public int MentorID { get; set; }  // was string, now int
 
+        [ForeignKey("CareerBridgeUser")]
         [Required]
         public string UserID { get; set; }
 
-        [ForeignKey("UserID")]
         public careerBridgeUser User { get; set; }
 
         [Required]
-        public string FullName { get; set; } = "";
+        public string FullName { get; set; }
 
         [Required, EmailAddress]
-        public string Email { get; set; } = "";
+        public string Email { get; set; }
 
         [Required]
-        public string Password { get; set; } = "";
-
-        [Required]
+        [Phone]
         public string Phone { get; set; }
         public string? ExpertiseArea { get; set; }
 
+        [Required]
         public string? CertificatePath { get; set; }
 
         // Navigation properties

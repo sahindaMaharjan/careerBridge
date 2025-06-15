@@ -8,29 +8,25 @@ namespace careerBridge.Models
     public class StudentProfile
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Prevent auto-increment
         public int StudentID { get; set; }
 
+        [ForeignKey("User")]
         [Required]
         public string UserID { get; set; }
-
-        [ForeignKey("UserID")]
         public careerBridgeUser User { get; set; }
 
         [Required, StringLength(100)]
-        public string FullName { get; set; } = "";
+        public string FullName { get; set; }
 
         [EmailAddress]
-        public string Email { get; set; } = "";
+        public string Email { get; set; }
 
         [Phone]
-        public string Phone { get; set; } = "";
+        public string Phone { get; set; } 
 
         [Required]
-        public string CollegeName { get; set; } = "";
+        public string CollegeName { get; set; } 
 
-        [Required]
-        public string Password { get; set; } = "";
 
         // Navigation
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
