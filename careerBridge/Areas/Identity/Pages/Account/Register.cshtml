@@ -8,114 +8,100 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <!-- Register Card -->
-        <section class="col-md-5">
+        <section class="col-md-6">
             <div class="card shadow-sm">
                 <header class="card-header bg-primary text-white text-center">
                     <h3 class="mb-0">@ViewData["Title"]</h3>
                 </header>
-
                 <div class="card-body">
                     <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data" novalidate>
-                        <h5 class="text-center mb-4">Create a new account</h5>
-
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Fullname" class="form-control" autocomplete="name" placeholder="Fullname" />
-                            <label asp-for="Input.Fullname">Fullname</label>
-                            <span asp-validation-for="Input.Fullname" class="text-danger"></span>
+                        <div class="mb-4 text-center">
+                            <span class="badge bg-secondary" id="stepIndicator">Step 1 of 2</span> <!-- Added id="stepIndicator" for JS update -->
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Input.Role" class="form-label">Role</label>
-                            <select asp-for="Input.Role" class="form-select" id="roleSelect" aria-label="Role select">
-                                <option value="" selected>-- choose one --</option>
-                                <option value="Student">Student</option>
-                                <option value="Employer">Employer</option>
-                                <option value="Mentor">Mentor</option>
-                            </select>
-                            <span asp-validation-for="Input.Role" class="text-danger"></span>
+                        <!-- Step 1: All fields except email/password/confirm password -->
+                        <div id="step1">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Fullname" class="form-control" placeholder="Fullname" />
+                                <label asp-for="Input.Fullname">Full Name</label>
+                                <span asp-validation-for="Input.Fullname" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Input.Role" class="form-label">Role</label>
+                                <select asp-for="Input.Role" class="form-select" id="roleSelect">
+                                    <option value="" selected>-- choose one --</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Employer">Employer</option>
+                                    <option value="Mentor">Mentor</option>
+                                </select>
+                                <span asp-validation-for="Input.Role" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Phone" class="form-control" placeholder="Phone" />
+                                <label asp-for="Input.Phone">Phone</label>
+                                <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                            </div>
+
+                            <!-- Student -->
+                            <div class="form-floating mb-3 d-none" id="collegeField">
+                                <input asp-for="Input.CollegeName" class="form-control" placeholder="College Name" />
+                                <label asp-for="Input.CollegeName">College Name</label>
+                                <span asp-validation-for="Input.CollegeName" class="text-danger"></span>
+                            </div>
+
+                            <!-- Employer -->
+                            <div class="form-floating mb-3 d-none" id="businessCer">
+                                <input asp-for="Input.BusinessCertificate" class="form-control" placeholder="Business Certificate" />
+                                <label asp-for="Input.BusinessCertificate">Business Certificate</label>
+                                <span asp-validation-for="Input.BusinessCertificate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Mentor -->
+                            <div class="form-floating mb-3 d-none" id="experienceCer">
+                                <input asp-for="Input.ExperienceCertificate" class="form-control" placeholder="Experience Certificate" />
+                                <label asp-for="Input.ExperienceCertificate">Experience Certificate</label>
+                                <span asp-validation-for="Input.ExperienceCertificate" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 d-none" id="expertiseField">
+                                <input asp-for="Input.ExpertiseArea" class="form-control" placeholder="Expertise Area" />
+                                <label asp-for="Input.ExpertiseArea">Expertise</label>
+                                <span asp-validation-for="Input.ExpertiseArea" class="text-danger"></span>
+                            </div>
+
+                            <button type="button" class="btn btn-info px-4 text-white w-100" onclick="goToStep2()">Next</button>
                         </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class ="form-control" autocomplete="email" placeholder="name@example.com" />
-                            <label asp-for="Input.Email">Email</label>
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
+                        <!-- Step 2: Only Email, Password, Confirm Password -->
+                        <div id="step2" style="display: none;">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" placeholder="Email" />
+                                <label asp-for="Input.Email">Email</label>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Phone" class="form-control" autocomplete="tel" placeholder="000-000-0000" />
-                            <label asp-for="Input.Phone">Phone</label>
-                            <span asp-validation-for="Input.Phone" class="text-danger"></span>
-                        </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" />
+                                <label asp-for="Input.Password">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" type="password" class="form-control" autocomplete="new-password" placeholder="Password" />
-                            <label asp-for="Input.Password">Password</label>
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        </div>
+                            <div class="form-floating mb-4">
+                                <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
 
-                        <div class="form-floating mb-4">
-                            <input asp-for="Input.ConfirmPassword" type="password" class="form-control" autocomplete="new-password" placeholder="Confirm Password" />
-                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-info px-4" onclick="backToStep1()">Back</button>
+                                <button type="submit" class="btn btn-success px-4 text-white">Register</button>
+                            </div>
                         </div>
-                        <!--only for students-->
-                        <div class="form-floating mb-3 d-none" id="collegeField">
-                            <input asp-for="Input.CollegeName" class="form-control" placeholder="College Name"/>
-                            <label asp-for="Input.CollegeName">College Name</label>
-                            <span asp-validation-for="Input.CollegeName" class="text-danger"></span>
-                        </div>
-                        <!--only for employers-->
-                        <div class="form-floating mb-3 d-none" id="businessCer">
-                            <input asp-for="Input.BusinessCertificate" class="form-control" placeholder="Business Certificate" />
-                            <label asp-for="Input.BusinessCertificate">Business Certificate</label>
-                            <span asp-validation-for="Input.BusinessCertificate" class="text-danger"></span>
-                        </div><!--only for mentors-->
-                        <div class="form-floating mb-3 d-none" id="experienceCer">
-                            <input asp-for="Input.ExperienceCertificate" class="form-control" placeholder="College Name" />
-                            <label asp-for="Input.ExperienceCertificate">College Name</label>
-                            <span asp-validation-for="Input.ExperienceCertificate" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating mb-3 d-none" id="expertiseField">
-                            <input asp-for="Input.ExpertiseArea" class="form-control" placeholder="Expertise" />
-                            <label asp-for="Input.ExpertiseArea">Expertise</label>
-                            <span asp-validation-for="Input.ExpertiseArea" class="text-danger"></span>
-                        </div>
-                        <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg w-100 mb-3">Register</button>
                     </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- External Logins Card -->
-        <section class="col-md-5 mt-4 mt-md-0">
-            <div class="card shadow-sm">
-                <header class="card-header bg-secondary text-white text-center">
-                    <h4 class="mb-0">Use another service to register</h4>
-                </header>
-
-                <div class="card-body text-center">
-                    @if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                    {
-                        <p>
-                            There are no external authentication services configured. See
-                            <a href="https://go.microsoft.com/fwlink/?LinkID=532715" target="_blank" rel="noopener noreferrer">this guide</a>.
-                        </p>
-                    }
-                    else
-                    {
-                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                            @foreach (var provider in Model.ExternalLogins!)
-                            {
-                                <button type="submit" class="btn btn-outline-primary w-100 mb-2" name="provider" value="@provider.Name"
-                                        title="Register using your @provider.DisplayName account">
-                                    Register with @provider.DisplayName
-                                </button>
-                            }
-                        </form>
-                    }
                 </div>
             </div>
         </section>
@@ -125,39 +111,62 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        function toggleRoleFields() {
-            let role = document.getElementById("roleSelect").value;
+        function goToStep2() {
+            const role = document.getElementById("roleSelect").value;
+            if (!role) {
+                alert("Please select a role.");
+                return;
+            }
 
-            let studentField = document.getElementById("collegeField");
-            let employerField = document.getElementById("businessCer");
-            let mentorField = document.getElementById("experienceCer");
-            let mentorField2 = document.getElementById("expertiseField");            
+            // Hide step 1 and show step 2
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
 
-            switch (role) {
-                case "Student":
-                    studentField.classList.remove("d-none");
-                    employerField.classList.add("d-none");
-                    mentorField.classList.add("d-none");
-                    mentorField2.classList.add("d-none");
-                    break;
-                case "Employer":
-                    studentField.classList.add("d-none");
-                    employerField.classList.remove("d-none");
-                    mentorField.classList.add("d-none");
-                    mentorField2.classList.add("d-none");
-                    break;
-                case "Mentor":
-                    studentField.classList.add("d-none");
-                    employerField.classList.add("d-none");
-                    mentorField.classList.remove("d-none");
-                    mentorField2.classList.remove("d-none");
-                    break;
-                default:
-                    break;
+            // Update step indicator text
+            document.getElementById("stepIndicator").innerText = "Step 2 of 2";
+
+            // Removed toggleRoleFields(role) call here because role fields are all in step 1 now
+        }
+
+        function backToStep1() {
+            // Show step 1 and hide step 2
+            document.getElementById("step1").style.display = "block";
+            document.getElementById("step2").style.display = "none";
+
+            // Update step indicator text
+            document.getElementById("stepIndicator").innerText = "Step 1 of 2";
+
+            // Re-toggle role-related fields when going back to step 1
+            const role = document.getElementById("roleSelect").value;
+            if(role) {
+                toggleRoleFields(role);
             }
         }
 
-        document.getElementById("roleSelect").addEventListener("change", toggleRoleFields);
-        window.addEventListener("DOMContentLoaded", toggleRoleFields);
+        function toggleRoleFields(role) {
+            let studentField = document.getElementById("collegeField");
+            let employerField = document.getElementById("businessCer");
+            let mentorField = document.getElementById("experienceCer");
+            let mentorField2 = document.getElementById("expertiseField");
+
+            studentField.classList.add("d-none");
+            employerField.classList.add("d-none");
+            mentorField.classList.add("d-none");
+            mentorField2.classList.add("d-none");
+
+            if (role === "Student") {
+                studentField.classList.remove("d-none");
+            } else if (role === "Employer") {
+                employerField.classList.remove("d-none");
+            } else if (role === "Mentor") {
+                mentorField.classList.remove("d-none");
+                mentorField2.classList.remove("d-none");
+            }
+        }
+
+        // Added event listener on role select to toggle fields dynamically on step 1
+        document.getElementById("roleSelect").addEventListener("change", function() {
+            toggleRoleFields(this.value);
+        });
     </script>
 }
