@@ -1,13 +1,92 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@{
+    Layout = "~/Views/Shared/_LayoutMinimal.cshtml";
+}
 
-<div class="text-center">
-<<<<<<< HEAD
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">hello there</a>.</p>
-=======
-    <h1 class="display-4">Goodbye people there </h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
->>>>>>> f1145fdfeda1aa4502ed7c5e3eb0a9fb90e308d3
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', sans-serif;
+        height: 100%;
+    }
+
+    .hero {
+        background-image: url('/img/one.png');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 5%;
+        color: white;
+        position: relative;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5); /* dark overlay */
+    }
+
+    .hero-content {
+        position: relative;
+        max-width: 600px;
+        z-index: 1;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+    }
+
+    .hero-content p {
+        font-size: 1.25rem;
+        margin-bottom: 30px;
+    }
+
+    .hero-content .btn {
+        padding: 12px 28px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        margin-right: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #218838;
+    }
+
+    .btn-secondary {
+        background-color: #ffffff;
+        color: #000;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>Career Bridge</h1>
+        <p>Simple and easy way to connect to your desier field. <p>
+
+        </p>Unlock Your Potential!!!! </p>
+        <a class="btn btn-primary"  id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="btn btn-secondary" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </div>
 </div>
