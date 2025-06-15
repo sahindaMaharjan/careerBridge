@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using careerBridge.Areas.Identity.Data;
+using careerBridge.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("careerBridgeDbConnection") ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
@@ -10,6 +12,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedAccount = true;
     options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
 });
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddDbContext<careerBridgeDb>(options => options.UseSqlServer(connectionString));
 
@@ -22,11 +26,7 @@ options.SignIn.RequireConfirmedAccount = true)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-
 var app = builder.Build();
-
-
-
 
 using (var scope = app.Services.CreateScope())
 {
