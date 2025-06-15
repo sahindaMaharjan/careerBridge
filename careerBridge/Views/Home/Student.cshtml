@@ -1,5 +1,100 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Student Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your Flatly-styled layout is applied
 }
+
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="text-success">Welcome, Student</h1>
+            <p class="lead">Explore jobs, register for events, and manage your dashboard.</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="row text-white mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Applied Jobs</h5>
+                    <p class="card-text display-6">3</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Registered Events</h5>
+                    <p class="card-text display-6">2</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Messages</h5>
+                    <p class="card-text display-6">5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Listings -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h3 class="text-dark">Available Job Listings</h3>
+            <table class="table table-hover mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Deadline</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Frontend Developer Intern</td>
+                        <td>TechNova</td>
+                        <td>Toronto</td>
+                        <td>June 30, 2025</td>
+                        <td><button class="btn btn-sm btn-outline-success">Apply</button></td>
+                    </tr>
+                    <tr>
+                        <td>Data Analyst Co-op</td>
+                        <td>AnalyticsPro</td>
+                        <td>Vancouver</td>
+                        <td>July 10, 2025</td>
+                        <td><button class="btn btn-sm btn-outline-success">Apply</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Event Registration -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h3 class="text-dark">Upcoming Events</h3>
+            <div class="list-group mt-3">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">Resume Building Workshop</h5>
+                        <p class="mb-1">Learn how to craft a standout resume. <strong>Date:</strong> July 5, 2025</p>
+                    </div>
+                    <button class="btn btn-outline-primary">Register</button>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">Networking Night</h5>
+                        <p class="mb-1">Connect with top employers and alumni. <strong>Date:</strong> July 12, 2025</p>
+                    </div>
+                    <button class="btn btn-outline-primary">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
