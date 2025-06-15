@@ -1,0 +1,31 @@
+﻿using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+
+namespace careerBridge.Models
+{
+    public class EmployerProfile
+    {
+        [Key]
+        public int EmployerID { get; set; }
+
+        [Required, StringLength(100)]
+        public string CompanyName { get; set; }
+
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string? Phone { get; set; } 
+
+        public string? Password { get; set; }
+
+        public string? BusinessCertificatePath { get; set; }
+
+        // Navigation
+        
+        public ICollection<JobListing> JobListings { get; set; } = new List<JobListing>();
+        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public ICollection<Message> SentMessages { get; set; } = new List<Message>();
+        public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
+    }
+}
