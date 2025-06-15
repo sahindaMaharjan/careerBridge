@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250615010730_initial")]
-    partial class initial
+    [Migration("20250615215926_final")]
+    partial class final
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,12 +105,10 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -147,12 +145,10 @@ namespace careerBridge.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -258,14 +254,18 @@ namespace careerBridge.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("EmployerID");
+
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Employers");
                 });
@@ -409,15 +409,18 @@ namespace careerBridge.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("MentorID");
+
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Mentors");
                 });
@@ -490,15 +493,18 @@ namespace careerBridge.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("StudentID");
+
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });
@@ -552,6 +558,17 @@ namespace careerBridge.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("careerBridge.Models.EmployerProfile", b =>
+                {
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
+                        .WithOne("EmployerProfile")
+                        .HasForeignKey("careerBridge.Models.EmployerProfile", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("careerBridge.Models.Event", b =>
@@ -618,6 +635,17 @@ namespace careerBridge.Migrations
                     b.Navigation("Employer");
                 });
 
+            modelBuilder.Entity("careerBridge.Models.MentorProfile", b =>
+                {
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
+                        .WithOne("MentorProfile")
+                        .HasForeignKey("careerBridge.Models.MentorProfile", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("careerBridge.Models.Message", b =>
                 {
                     b.HasOne("careerBridge.Models.EmployerProfile", "ReceiverEmployer")
@@ -661,6 +689,29 @@ namespace careerBridge.Migrations
                     b.Navigation("SenderMentor");
 
                     b.Navigation("SenderStudent");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.StudentProfile", b =>
+                {
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("careerBridge.Models.StudentProfile", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("careerBridge.Areas.Identity.Data.careerBridgeUser", b =>
+                {
+                    b.Navigation("EmployerProfile")
+                        .IsRequired();
+
+                    b.Navigation("MentorProfile")
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("careerBridge.Models.EmployerProfile", b =>

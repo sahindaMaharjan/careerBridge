@@ -102,12 +102,10 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -144,12 +142,10 @@ namespace careerBridge.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -244,7 +240,6 @@ namespace careerBridge.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployerID"));
 
                     b.Property<string>("BusinessCertificatePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
@@ -266,7 +261,8 @@ namespace careerBridge.Migrations
 
                     b.HasKey("EmployerID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Employers");
                 });
@@ -397,7 +393,6 @@ namespace careerBridge.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MentorID"));
 
                     b.Property<string>("CertificatePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -421,7 +416,8 @@ namespace careerBridge.Migrations
 
                     b.HasKey("MentorID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Mentors");
                 });
@@ -504,7 +500,8 @@ namespace careerBridge.Migrations
 
                     b.HasKey("StudentID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });
@@ -563,8 +560,8 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("careerBridge.Models.EmployerProfile", b =>
                 {
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
+                        .WithOne("EmployerProfile")
+                        .HasForeignKey("careerBridge.Models.EmployerProfile", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -638,8 +635,8 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("careerBridge.Models.MentorProfile", b =>
                 {
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
+                        .WithOne("MentorProfile")
+                        .HasForeignKey("careerBridge.Models.MentorProfile", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -694,12 +691,24 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("careerBridge.Models.StudentProfile", b =>
                 {
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("careerBridge.Models.StudentProfile", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("careerBridge.Areas.Identity.Data.careerBridgeUser", b =>
+                {
+                    b.Navigation("EmployerProfile")
+                        .IsRequired();
+
+                    b.Navigation("MentorProfile")
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("careerBridge.Models.EmployerProfile", b =>

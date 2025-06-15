@@ -10,10 +10,10 @@ namespace careerBridge.Models
         [Key]
         public int EmployerID { get; set; }
 
-        [ForeignKey("careerBridgeUser")]
         [Required]
         public string UserID { get; set; }
 
+        [ForeignKey("UserID")]
         public careerBridgeUser User { get; set; }
 
 
@@ -28,7 +28,6 @@ namespace careerBridge.Models
         [Phone]
         public string? Phone { get; set; }
 
-        [Required]
         public string? BusinessCertificatePath { get; set; }
 
         // Navigation

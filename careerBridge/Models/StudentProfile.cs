@@ -1,7 +1,7 @@
 ﻿using careerBridge.Areas.Identity.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Identity;
 
 namespace careerBridge.Models
 {
@@ -10,9 +10,10 @@ namespace careerBridge.Models
         [Key]
         public int StudentID { get; set; }
 
-        [ForeignKey("User")]
         [Required]
         public string UserID { get; set; }
+
+        [ForeignKey("UserID")]
         public careerBridgeUser User { get; set; }
 
         [Required, StringLength(100)]
@@ -24,7 +25,6 @@ namespace careerBridge.Models
         [Phone]
         public string Phone { get; set; } 
 
-        [Required]
         public string CollegeName { get; set; } 
 
 

@@ -14,7 +14,7 @@
                     <h3 class="mb-0">@ViewData["Title"]</h3>
                 </header>
                 <div class="card-body">
-                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data" novalidate>
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
                         <div class="mb-4 text-center">
                             <span class="badge bg-secondary" id="stepIndicator">Step 1 of 2</span> <!-- Added id="stepIndicator" for JS update -->
                         </div>
