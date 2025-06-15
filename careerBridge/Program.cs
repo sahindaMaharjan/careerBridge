@@ -4,6 +4,12 @@ using careerBridge.Areas.Identity.Data;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("careerBridgeDbConnection") ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+});
+
 builder.Services.AddDbContext<careerBridgeDb>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<careerBridgeUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<careerBridgeDb>();

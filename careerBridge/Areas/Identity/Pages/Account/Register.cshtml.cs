@@ -229,6 +229,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
+                    await _db.SaveChangesAsync();
+
                 }
                 foreach (var error in result.Errors)
                 {
