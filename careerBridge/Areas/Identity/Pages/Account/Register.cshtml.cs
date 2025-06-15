@@ -209,6 +209,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                             }
                             break;
                     }
+                    await _db.SaveChangesAsync();
 
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
@@ -229,7 +230,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
-                    await _db.SaveChangesAsync();
+                    
 
                 }
                 foreach (var error in result.Errors)
