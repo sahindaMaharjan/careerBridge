@@ -176,6 +176,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                     switch (Input.Role)
                     {
                         case "Student":
+                            _logger.LogInformation("Saving Student Profile....");
                             _db.Students.Add(new StudentProfile
                             {
                                 UserID = userId,
@@ -187,6 +188,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                             });
                             break;
                         case "Employer":
+                            _logger.LogInformation("Saving Employer Profile....");
                             if (Input.BusinessCertificate != null)
                             {
                                 var cer = Guid.NewGuid().ToString() + Path.GetExtension(Input.BusinessCertificate.FileName);
@@ -207,7 +209,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
                             break;
 
                         case "Mentor":
-                        if (Input.ExperienceCertificate != null)
+                            _logger.LogInformation("Saving Mentor Profile....");
+                            if (Input.ExperienceCertificate != null)
                             {
                                 var cer = Guid.NewGuid().ToString() + Path.GetExtension(Input.ExperienceCertificate.FileName);
                                 var file = Path.Combine(_env.WebRootPath, "certificates", cer);
@@ -246,7 +249,20 @@ namespace careerBridge.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (Input.Role == "Student")
+                        {
+                            return RedirectToAction("Index", "Student");
+                        }
+                        else if (Input.Role == "Employer")
+                        {
+                            return RedirectToAction("index", "Employer");
+                        }
+                        else if (Input.Role == "Mentor")
+                        {
+                            return RedirectToAction("Index", "Mentor");
+                        }
+
+                        return RedirectToAction("/Index");
                     }
                     
 
@@ -255,6 +271,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+
             }
 
             // If we got this far, something failed, redisplay form
