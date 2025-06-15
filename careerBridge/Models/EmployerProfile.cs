@@ -10,7 +10,6 @@ namespace careerBridge.Models
         [Key]
         public int EmployerID { get; set; }
 
-        [Required]
         public string UserID { get; set; }
 
         [ForeignKey("UserID")]

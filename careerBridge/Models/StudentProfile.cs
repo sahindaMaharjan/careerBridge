@@ -10,7 +10,6 @@ namespace careerBridge.Models
         [Key]
         public int StudentID { get; set; }
 
-        [Required]
         public string UserID { get; set; }
 
         [ForeignKey("UserID")]
@@ -29,7 +28,7 @@ namespace careerBridge.Models
 
 
         // Navigation
-        public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
+        public ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
         public ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
         public ICollection<Message> SentMessages { get; set; } = new List<Message>();
         public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();

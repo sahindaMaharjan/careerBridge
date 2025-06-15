@@ -17,7 +17,7 @@ public class careerBridgeDb : IdentityDbContext<careerBridgeUser>
     public DbSet<EmployerProfile> Employers { get; set; }
     public DbSet<MentorProfile> Mentors { get; set; }
     public DbSet<JobListing> JobListings { get; set; }
-    public DbSet<JobApplication> Applications { get; set; }
+    public DbSet<JobApplication> JobApplications { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventRegistration> EventRegistrations { get; set; }
     public DbSet<Message> Messages { get; set; }
@@ -30,13 +30,65 @@ public class careerBridgeDb : IdentityDbContext<careerBridgeUser>
         modelBuilder.Entity<StudentProfile>()
             .Property(s => s.StudentID)
             .ValueGeneratedNever();
+        // --- JobApplication ---
+        modelBuilder.Entity<JobApplication>()
+            .HasOne(ja => ja.Student)
+            .WithMany(s => s.JobApplications)
+            .HasForeignKey(ja => ja.StudentID)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // Employer relationships
-        modelBuilder.Entity<EmployerProfile>()
+        // --- EventRegistration ---
+        modelBuilder.Entity<EventRegistration>()
+            .HasOne(er => er.Student)
+            .WithMany(s => s.EventRegistrations)
+            .HasForeignKey(er => er.StudentID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // --- Messages ---
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.SenderStudent)
+            .WithMany(s => s.SentMessages)
+            .HasForeignKey(m => m.SenderStudentID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.ReceiverStudent)
+            .WithMany(s => s.ReceivedMessages)
+            .HasForeignKey(m => m.ReceiverStudentID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.SenderMentor)
+            .WithMany()
+            .HasForeignKey(m => m.SenderMentorID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.ReceiverMentor)
+            .WithMany()
+            .HasForeignKey(m => m.ReceiverMentorID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.SenderEmployer)
+            .WithMany()
+            .HasForeignKey(m => m.SenderEmployerID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.ReceiverEmployer)
+            .WithMany()
+            .HasForeignKey(m => m.ReceiverEmployerID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+    // Employer relationships
+       modelBuilder.Entity<EmployerProfile>()
             .HasMany(e => e.ReceivedMessages)
             .WithOne(m => m.ReceiverEmployer)
             .HasForeignKey(m => m.ReceiverEmployerID)
             .OnDelete(DeleteBehavior.Restrict);
+
+        
 
         modelBuilder.Entity<EmployerProfile>()
             .HasMany(e => e.SentMessages)
@@ -45,6 +97,13 @@ public class careerBridgeDb : IdentityDbContext<careerBridgeUser>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Student relationships
+
+        modelBuilder.Entity<EventRegistration>()
+            .HasOne(a => a.Student)
+            .WithMany(s => s.EventRegistrations)
+            .HasForeignKey(a => a.StudentID)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<StudentProfile>()
             .HasMany(s => s.ReceivedMessages)
             .WithOne(m => m.ReceiverStudent)
@@ -69,6 +128,18 @@ public class careerBridgeDb : IdentityDbContext<careerBridgeUser>
             .WithOne(msg => msg.SenderMentor)
             .HasForeignKey(msg => msg.SenderMentorID)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<JobApplication>()
+     .HasOne(ja => ja.JobListing)
+    .WithMany(j => j.Applications)
+    .HasForeignKey(ja => ja.JobListingID)
+    .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EventRegistration>()
+     .HasOne(ja => ja.Event)
+    .WithMany(j => j.EventRegistrations)
+    .HasForeignKey(ja => ja.EventID)
+    .OnDelete(DeleteBehavior.Cascade);
     }
 
 }

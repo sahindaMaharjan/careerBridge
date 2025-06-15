@@ -19,5 +19,8 @@ namespace careerBridge.Models
 
         // Navigation property
         public EmployerProfile Employer { get; set; } = null!;
+
+        public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
+
     }
 }

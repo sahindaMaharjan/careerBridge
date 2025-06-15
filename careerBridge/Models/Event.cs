@@ -21,5 +21,8 @@ namespace careerBridge.Models
 
         // Navigation
         public MentorProfile Mentor { get; set; } = null!;
+
+        public ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
+
     }
 }
