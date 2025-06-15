@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="~/careerBridge.styles.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Main navigation">
             <div class="container-fluid">
@@ -38,8 +38,6 @@
                         </li>
                     </ul>
 
-                   
-
                     <div class="d-flex align-items-center">
                         <partial name="_LoginPartial" />
                     </div>
@@ -48,11 +46,11 @@
         </nav>
     </header>
 
-    <main class="container mt-4 pb-3" role="main">
+    <main class="container mt-4 flex-grow-1" role="main">
         @RenderBody()
     </main>
 
-    <footer class="bg-light text-center text-muted py-3 mt-5 border-top">
+    <footer class="bg-light text-center text-muted py-3 border-top">
         <div class="container">
             &copy; @DateTime.Now.Year - careerBridge | <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
