@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250615235740_init")]
-    partial class init
+    [Migration("20250616164130_InitialClean")]
+    partial class InitialClean
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -478,7 +478,10 @@ namespace careerBridge.Migrations
             modelBuilder.Entity("careerBridge.Models.StudentProfile", b =>
                 {
                     b.Property<int>("StudentID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentID"));
 
                     b.Property<string>("CollegeName")
                         .IsRequired()
