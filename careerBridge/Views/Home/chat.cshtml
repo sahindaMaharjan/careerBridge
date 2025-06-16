@@ -2,6 +2,96 @@
     ViewData["Title"] = "Student Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your Flatly-styled layout is applied
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+
+
+<style>
+    .chat-preview-box {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 1px solid #eaeaea;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .chat-preview-box:hover {
+            background-color: #f5f5f5;
+        }
+
+    .chat-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+
+    .chat-content {
+        flex-grow: 1;
+    }
+
+    .chat-name {
+        font-weight: bold;
+    }
+
+    .chat-message {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .chat-time {
+        font-size: 0.8rem;
+        color: #aaa;
+        white-space: nowrap;
+    }
+
+    .unread-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #0d6efd;
+        border-radius: 50%;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h4 class="text-center text-primary mb-4">Your Mentor Messages</h4>
+
+    <a href="/Chat/StudentMentorChat/1" class="chat-preview-box">
+        <img src="https://via.placeholder.com/50x50" class="chat-avatar" alt="Kerry Lakin" />
+        <div class="chat-content">
+            <div class="chat-name">Kerry Lakin</div>
+            <div class="chat-message">Love it! ✨</div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="chat-time">1m</div>
+        </div>
+    </a>
+
+    <a href="/Chat/StudentMentorChat/2" class="chat-preview-box">
+        <img src="https://via.placeholder.com/50x50" class="chat-avatar" alt="Shopahelics" />
+        <div class="chat-content">
+            <div class="chat-name">Shopahelics</div>
+            <div class="chat-message">This dress? 👗 or 👜</div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="chat-time">3m</div>
+            <div class="unread-dot"></div>
+        </div>
+    </a>
+
+    <a href="/Chat/StudentMentorChat/3" class="chat-preview-box">
+        <img src="https://via.placeholder.com/50x50" class="chat-avatar" alt="Corey Ponder" />
+        <div class="chat-content">
+            <div class="chat-name">Corey Ponder</div>
+            <div class="chat-message">👊🏽✊🏽</div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="chat-time">5m</div>
+        </div>
+    </a>
+</div>

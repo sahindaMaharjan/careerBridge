@@ -33,7 +33,7 @@ namespace careerBridge.Controllers
             return View();
         }
 
-        public IActionResult Chat()
+        public IActionResult chat()
         {
             return View();
         }
@@ -41,12 +41,18 @@ namespace careerBridge.Controllers
         {
             return View();
         }
+        public IActionResult GroupChat()
+        {
+
+            return View();
+        }
 
         public IActionResult Community()
         {
             return View();
         }
-
+            
+      
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
