@@ -19,7 +19,6 @@
                             <span class="badge bg-secondary" id="stepIndicator">Step 1 of 2</span> <!-- Added id="stepIndicator" for JS update -->
                         </div>
 
-                        <!-- Step 1: All fields except email/password/confirm password -->
                         <div id="step1">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
@@ -76,7 +75,6 @@
                             <button type="button" class="btn btn-info px-4 text-white w-100" onclick="goToStep2()">Next</button>
                         </div>
 
-                        <!-- Step 2: Only Email, Password, Confirm Password -->
                         <div id="step2" style="display: none;">
                             <div class="form-floating mb-3">
                                 <input asp-for="Input.Email" class="form-control" placeholder="Email" />
@@ -111,6 +109,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        //swikrit
         function goToStep2() {
             const role = document.getElementById("roleSelect").value;
             if (!role) {
@@ -118,31 +117,26 @@
                 return;
             }
 
-            // Hide step 1 and show step 2
             document.getElementById("step1").style.display = "none";
             document.getElementById("step2").style.display = "block";
 
-            // Update step indicator text
             document.getElementById("stepIndicator").innerText = "Step 2 of 2";
 
-            // Removed toggleRoleFields(role) call here because role fields are all in step 1 now
         }
 
         function backToStep1() {
-            // Show step 1 and hide step 2
             document.getElementById("step1").style.display = "block";
             document.getElementById("step2").style.display = "none";
 
-            // Update step indicator text
             document.getElementById("stepIndicator").innerText = "Step 1 of 2";
 
-            // Re-toggle role-related fields when going back to step 1
             const role = document.getElementById("roleSelect").value;
             if(role) {
                 toggleRoleFields(role);
             }
         }
 
+        //sahinda
         function toggleRoleFields(role) {
             let studentField = document.getElementById("collegeField");
             let employerField = document.getElementById("businessCer");
@@ -164,7 +158,6 @@
             }
         }
 
-        // Added event listener on role select to toggle fields dynamically on step 1
         document.getElementById("roleSelect").addEventListener("change", function() {
             toggleRoleFields(this.value);
         });
