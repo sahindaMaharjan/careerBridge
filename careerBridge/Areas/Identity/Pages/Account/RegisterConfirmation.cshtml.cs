@@ -47,6 +47,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
+            ViewData["HideNavbar"] = true;
+
             if (email == null)
             {
                 return RedirectToPage("/Index");

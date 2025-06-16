@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace careerBridge.Areas.Identity.Pages.Account
 {
+
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<careerBridgeUser> _userManager;
@@ -32,6 +33,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
         public string StatusMessage { get; set; }
         public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
+            ViewData["HideNavbar"] = true;
+
             if (userId == null || code == null)
             {
                 return RedirectToPage("/Index");
