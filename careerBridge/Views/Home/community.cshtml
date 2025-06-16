@@ -1,6 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Communities";
 }
-<h1>@ViewData["Title"]</h1>
+@{
+    ViewData["Title"] = "Communities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-<p>Use this page to detail your site's privacy policy.</p>
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h3 class="mb-4 text-center text-primary">Join a Community</h3>
+
+    <div class="list-group">
+        <a href="/Community/GroupChat/1" class="list-group-item list-group-item-action">
+            🧑‍💼 Career Mentorship
+            <span class="badge bg-primary float-end">32 members</span>
+        </a>
+        <a href="/Community/GroupChat/2" class="list-group-item list-group-item-action">
+            👩‍💻 Tech Internships
+            <span class="badge bg-success float-end">21 members</span>
+        </a>
+        <a href="/Community/GroupChat/3" class="list-group-item list-group-item-action">
+            💬 General Student Lounge
+            <span class="badge bg-info float-end">58 members</span>
+        </a>
+    </div>
+</div>
