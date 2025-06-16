@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "Student Mentor Portal";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Make sure this path matches your actual layout location
+}
+
+<!-- Bootstrap + Flatly Theme -->
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css" rel="stylesheet" />
+
+<!-- The rest of your HTML stays exactly the same -->
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="text-info">Meet Your Mentor</h1>
+            <p class="lead">Explore your mentor's profile, connect, and track your sessions.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Mentor Profile -->
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <img src="https://via.placeholder.com/120" class="rounded-circle mb-3" alt="Mentor Photo">
+                    <h5 class="card-title">Dr. Sarah Lee</h5>
+                    <p class="card-text">Senior Data Scientist at DataWorks Inc.</p>
+                    <p class="text-muted">Experience: 10+ years | Location: Toronto</p>
+                    <a href="#" class="btn btn-outline-info btn-sm">View Full Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat + Resources -->
+        <div class="col-md-8">
+            <!-- Connect Section -->
+            <div class="card border-info mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">Connect with Your Mentor</h4>
+                    <a href="/Chat/StudentMentorChat" class="btn btn-success me-2">Open Chat</a>
+                    <a href="/Mentor/ScheduleSession" class="btn btn-outline-primary">Schedule Session</a>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="card border-success mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">Mentor Resources</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="/Resources/ResumeTips.pdf" target="_blank">📄 Resume Writing Tips</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="/Resources/InterviewQuestions.docx" target="_blank">🎤 Common Interview Questions</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="/Resources/LinkedInGuide.pdf" target="_blank">🔗 LinkedIn Optimization Guide</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card border-dark">
+                <div class="card-body">
+                    <h4 class="card-title">Your Mentoring Calendar</h4>
+                    <div id="mentorCalendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('mentorCalendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 500,
+            events: [
+                {
+                    title: 'Session with Dr. Lee',
+                    start: '2025-06-20T14:00:00',
+                    end: '2025-06-20T15:00:00'
+                },
+                {
+                    title: 'Resume Review',
+                    start: '2025-06-25T10:00:00',
+                    end: '2025-06-25T11:00:00'
+                },
+                {
+                    title: 'Mock Interview',
+                    start: '2025-07-01T13:00:00',
+                    end: '2025-07-01T14:00:00'
+                }
+            ]
+        });
+        calendar.render();
+    });
+</script>
