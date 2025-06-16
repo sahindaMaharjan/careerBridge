@@ -49,9 +49,15 @@ namespace careerBridge.Areas.Identity.Pages.Account
             [EmailAddress]
             public string Email { get; set; }
         }
+        public void OnGet()
+        {
+            ViewData["HideNavbar"] = true;
+        }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ViewData["HideNavbar"] = true;
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);

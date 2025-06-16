@@ -20,6 +20,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
         /// </summary>
         public void OnGet()
         {
+            ViewData["HideNavbar"] = true;
         }
     }
 }

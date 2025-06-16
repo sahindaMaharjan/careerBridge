@@ -53,10 +53,14 @@ namespace careerBridge.Areas.Identity.Pages.Account
 
         public void OnGet()
         {
+               ViewData["HideNavbar"] = true;
+            
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ViewData["HideNavbar"] = true;
+
             if (!ModelState.IsValid)
             {
                 return Page();

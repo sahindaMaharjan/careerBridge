@@ -74,6 +74,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
 
         public IActionResult OnGet(string code = null)
         {
+            ViewData["HideNavbar"] = true;
+
             if (code == null)
             {
                 return BadRequest("A code must be supplied for password reset.");
@@ -90,6 +92,8 @@ namespace careerBridge.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ViewData["HideNavbar"] = true;
+
             if (!ModelState.IsValid)
             {
                 return Page();

@@ -45,8 +45,15 @@ namespace careerBridge.Areas.Identity.Pages.Account
         /// </summary>
         public string EmailConfirmationUrl { get; set; }
 
+        public void OnGet()
+        {
+            ViewData["HideNavbar"] = true;
+        }
+
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
+            ViewData["HideNavbar"] = true;
+
             if (email == null)
             {
                 return RedirectToPage("/Index");
