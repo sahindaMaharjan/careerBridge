@@ -5,35 +5,44 @@ using careerBridge.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("careerBridgeDbConnection") ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
 
+// Configure connection string
+var connectionString = builder.Configuration.GetConnectionString("careerBridgeDbConnection")
+    ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
+
+// Configure Identity options
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
     options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
 });
 
+// Add EF DbContext
+builder.Services.AddDbContext<careerBridgeDb>(options =>
+    options.UseSqlServer(connectionString));
+
+// Add Identity with roles + token providers (for 2FA)
+builder.Services.AddIdentity<careerBridgeUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+})
+    .AddEntityFrameworkStores<careerBridgeDb>()
+    .AddDefaultTokenProviders(); // ?? Needed for 2FA
+
+// Email sender (for confirmation links)
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-builder.Services.AddDbContext<careerBridgeDb>(options => options.UseSqlServer(connectionString));
-
-builder.Services.AddIdentity<careerBridgeUser, IdentityRole>(options => 
-options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<careerBridgeDb>()
-    .AddDefaultTokenProviders();
-
-// Add services to the container.
+// MVC and Razor Pages
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+// Seed Roles
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
     string[] roles = new[] { "Student", "Employer", "Mentor" };
-
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -43,12 +52,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-// Configure the HTTP request pipeline.
+// Configure HTTP pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -65,4 +72,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
 app.Run();

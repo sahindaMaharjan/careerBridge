@@ -114,6 +114,11 @@ namespace careerBridge.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
+                var role = await _userManager.GetRolesAsync(user);
+                if (role.Contains("Student")) { return RedirectToAction("Index", "Student"); }
+                else if (role.Contains("Mentor")) { return RedirectToAction("Index", "Mentor"); }
+                else if (role.Contains("Employer")) { return RedirectToAction("Index", "Employer"); }
+
                 return LocalRedirect(returnUrl);
             }
             else if (result.IsLockedOut)
