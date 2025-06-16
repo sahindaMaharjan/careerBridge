@@ -1,23 +1,40 @@
 ﻿@page
 @model RegisterConfirmationModel
 @{
-    ViewData["Title"] = "Register confirmation";
+    ViewData["Title"] = "Registration Confirmation";
 }
 
-<h1>@ViewData["Title"]</h1>
-@{
-    if (@Model.DisplayConfirmAccountLink)
-    {
-<p>
-    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
-    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
-</p>
-    }
-    else
-    {
-<p>
-        Please check your email to confirm your account.
-</p>
-    }
-}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Thank You for Registering!</h2>
 
+                    @if (Model.DisplayConfirmAccountLink)
+                    {
+                        <div class="alert alert-info text-center" role="alert">
+                            A confirmation email has been sent to your registered email address.
+                            Please follow the instructions in the email to complete your registration.
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="fw-bold">Development only: You can confirm your account directly by clicking below:</p>
+                            <a class="btn btn-primary" href="@Model.EmailConfirmationUrl">Confirm Email</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success text-center" role="alert">
+                            Please check your inbox and verify your email address to activate your account. If you don’t see the email within a few minutes, check your spam or junk folder.
+                        </div>
+                    }
+
+                    <p class="text-center mt-4 text-muted">
+                        If you continue to experience issues, please <a href="/Support">contact support</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

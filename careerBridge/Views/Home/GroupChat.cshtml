@@ -1,0 +1,51 @@
+﻿@page
+@model careerBridge.Views.Home.InboxModel
+@{
+}
+@{
+    ViewData["Title"] = "Messages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    ViewData["Title"] = "Community Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var groupName = ViewBag.GroupName ?? "Group";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h4 class="mb-4 text-center text-info">@groupName Chat Room</h4>
+
+    <div class="card shadow">
+        <div class="card-body" style="height: 400px; overflow-y: auto;" id="groupChatBox">
+            <div><strong>Alice:</strong> Welcome to the group! 😊</div>
+            <div class="text-end"><strong>You:</strong> Hi everyone! Glad to join.</div>
+        </div>
+        <div class="card-footer">
+            <form id="groupChatForm">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="groupChatInput" placeholder="Say something..." />
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('groupChatForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const input = document.getElementById('groupChatInput');
+        const message = input.value.trim();
+        if (message === '') return;
+
+        const chatBox = document.getElementById('groupChatBox');
+        const msg = document.createElement('div');
+        msg.className = "text-end";
+        msg.innerHTML = `<strong>You:</strong> ${message}`;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        input.value = '';
+    });
+</script>

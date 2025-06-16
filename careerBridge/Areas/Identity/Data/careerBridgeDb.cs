@@ -26,10 +26,10 @@ public class careerBridgeDb : IdentityDbContext<careerBridgeUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        // Disable identity for manually entered StudentID
+      
         modelBuilder.Entity<StudentProfile>()
             .Property(s => s.StudentID)
-            .ValueGeneratedNever();
+            .ValueGeneratedOnAdd();
         // --- JobApplication ---
         modelBuilder.Entity<JobApplication>()
             .HasOne(ja => ja.Student)
