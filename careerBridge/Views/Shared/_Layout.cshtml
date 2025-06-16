@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,34 +15,49 @@
 
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Main navigation">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">CareerBridge</a>
+        @if (ViewBag.HideNavbar == null || ViewBag.HideNavbar == false)
+        {
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Main navigation">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Student">CareerBridge</a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
-                        aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                            aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="About" asp-action="Index">About</a>
-                        </li>
-                    </ul>
-
-                    <div class="d-flex align-items-center">
-                        <partial name="_LoginPartial" />
+                    <div class="collapse navbar-collapse" id="navbarMain">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" asp-controller="Home" asp-action="Student">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Privacy">Chat</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="About" asp-action="Index">Mentor</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="About" asp-action="Index">Community</a>
+                            </li>
+                        </ul>
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                               id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/img/wlp.jpg" alt="Profile" width="64" height="60" class="rounded-circle me-2">
+                                <strong>User</strong>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start text-small shadow" aria-labelledby="dropdownUser">
+                                <li><h6 class="dropdown-header">Hello, @User.Identity.Name</h6></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Logout</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        }
     </header>
 
     <main class="container mt-4 flex-grow-1" role="main">
@@ -61,5 +75,4 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>
