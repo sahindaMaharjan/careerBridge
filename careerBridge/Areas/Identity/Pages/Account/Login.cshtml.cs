@@ -102,7 +102,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                     }
                     else if (roles.Contains("Employer"))
                     {
-                        return LocalRedirect("~/Student/Dashboard"); //for now
+                        return LocalRedirect("~/Student/Dashboard"); //for now cause we dont have employer dashboard
                     }
                 }
                 if (result.RequiresTwoFactor)
