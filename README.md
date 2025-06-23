@@ -45,4 +45,4 @@ Make sure you have the following installed:
    If you downloaded a ZIP, extract it. Or clone using:
 
    ```bash
-   git clone <your-repo-url>
+   git clone <repo-url>
