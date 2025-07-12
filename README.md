@@ -1,48 +1,43 @@
 # CareerBridge
 
-CareerBridge is a web application built using ASP.NET Core MVC that helps users explore and manage career opportunities. It includes features for job seekers, recruiters, and administrators to manage profiles, job postings, and applications.
-
----
+**CareerBridge** is a web app built with **ASP.NET Core MVC** to help users explore and manage career opportunities. It supports **students**, **recruiters**, and **admins** with features like job posting, applications, and profile management.
 
 ## ✨ Features
 
-- ✅ User registration and login with email confirmation
-- 🔐 Role-based authentication (Admin, Recruiter, Student)
-- 📄 Resume upload functionality
-- 🧑‍💼 Job posting and application system
-- 📬 Email notifications for registration and status updates
-- 🌐 Clean, responsive interface using Razor Pages and Bootstrap
+- ✅ Email-confirmed user registration & login  
+- 🔐 Role-based access: Admin, Recruiter, Student  
+- 📄 Resume upload  
+- 🧑‍💼 Job posting & application system  
+- 📬 Email notifications  
+- 🌐 Responsive UI with Bootstrap  
 
----
+## 🛠 Tech Stack
 
-## 🛠 Technologies Used
-
-- ASP.NET Core MVC (.NET 6 or higher)
-- Entity Framework Core
-- ASP.NET Identity
-- Razor Pages
-- SQL Server
-- Bootstrap
-
----
+- ASP.NET Core MVC (.NET 6+)  
+- Entity Framework Core + SQL Server  
+- Razor Pages & ASP.NET Identity  
+- Bootstrap  
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Make sure you have the following installed:
+- .NET 6 SDK  
+- Visual Studio 2022+  
+- SQL Server  
 
-- [.NET SDK 6+](https://dotnet.microsoft.com/en-us/download)
-- [Visual Studio 2022 or newer](https://visualstudio.microsoft.com/)
-- [SQL Server or SQL Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+### Setup
 
----
-
-### Installation Steps
-
-1. **Clone or Extract the Project:**
-
-   If you downloaded a ZIP, extract it. Or clone using:
-
+1. Clone or extract the project:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/your-username/CareerBridge.git
+   cd CareerBridge
+2. Update appsettings.json with your SQL Server connection string.
+3. Apply migrations and update the database:
+4. Run the app locally:
+   -In Visual Studio: Press F5 to launch on localhost
+The app will be available at:
+https://localhost:5001 or http://localhost:5000
+
+
+   

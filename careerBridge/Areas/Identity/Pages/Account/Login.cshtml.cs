@@ -94,7 +94,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                 {
                     if (roles.Contains("Student"))
                     {
-                        return LocalRedirect("~/Home/Student");
+                        return LocalRedirect("~/Student/Index");
                     }
                     else if (roles.Contains("Mentor"))
                     {
@@ -102,7 +102,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                     }
                     else if (roles.Contains("Employer"))
                     {
-                        return LocalRedirect("~/Home/Employer"); //for now cause we dont have employer dashboard
+                        return LocalRedirect("~/Employer/Index"); //for now cause we dont have employer dashboard
                     }
                 }
                 if (result.RequiresTwoFactor)

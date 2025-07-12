@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject SignInManager<careerBridgeUser> SignInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,8 +11,6 @@
 
     <!-- Bootswatch Flatly Theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" />
-
-    <!-- Custom Styles -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/careerBridge.styles.css" asp-append-version="true" />
 </head>
@@ -19,8 +21,7 @@
         {
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <div class="container-fluid">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Student">CareerBridge</a>
-
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">CareerBridge</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
                             aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -28,36 +29,60 @@
 
                     <div class="collapse navbar-collapse" id="navbarMain">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" asp-controller="Home" asp-action="Student">Overview</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="chat">Chat</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="mentorstd">Mentor</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="community">Community</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-page="/Account/Manage/EnableAuthenticator" >Enable 2fa</a>
-                            </li>
-
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                if (User.IsInRole("Student"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="Index">Dashboard</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="JobApplications" asp-action="Index">My Applications</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="EventRegistration" asp-action="Index">My Events</a></li>
+                                }
+                                else if (User.IsInRole("Employer"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Employer" asp-action="Index">Dashboard</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Job" asp-action="Index">My Job Posts</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="Index">Chats</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Event" asp-action="Index">My Events</a></li>
+                                }
+                                else if (User.IsInRole("Mentor"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Mentor" asp-action="Index">Dashboard</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="MentorSessions" asp-action="Index">Sessions</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="Index">Chats</a></li>
+                                }
+                                else if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Panel</a></li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+                            }
                         </ul>
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                               id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="~/img/wlp.jpg" alt="Profile" width="64" height="60" class="rounded-circle me-2">
-                                <strong>User</strong>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start text-small shadow" aria-labelledby="dropdownUser">
-                                <li><h6 class="dropdown-header">Hello, @User.Identity.Name</h6></li>
-                                <li><a class="dropdown-item" href="#">Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Logout</a></li>
-                            </ul>
-                        </div>
+
+                        <ul class="navbar-nav ms-auto">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">
+                                        <img src="~/img/wlp.jpg" alt="Profile" width="40" height="40" class="rounded-circle me-2" />
+                                        <span class="text-white">@User.Identity?.Name</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header">Hello, @User.Identity?.Name</h6></li>
+                                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li>
+                                            <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                                <button type="submit" class="dropdown-item">Logout</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -70,11 +95,11 @@
 
     <footer class="bg-light text-center text-muted py-3 border-top">
         <div class="container">
-            &copy; @DateTime.Now.Year - careerBridge | <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - careerBridge |
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
