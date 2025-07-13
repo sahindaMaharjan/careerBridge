@@ -2,7 +2,6 @@
     ViewData["Title"] = "Student Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your Flatly-styled layout is applied
 }
-@model List<careerBridge.Models.ExternalJobViewModel>
 
 <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
 
@@ -13,33 +12,6 @@
             <p class="lead">Explore jobs, register for events, and manage your dashboard.</p>
         </div>
     </div>
-    <h2>Search Jobs</h2>
-
-    <form method="get">
-        <input type="text" name="searchQuery" placeholder="e.g. software engineer" value="@Context.Request.Query["searchQuery"]" />
-        <button type="submit">Search</button>
-    </form>
-
-    @if (Model != null && Model.Any())
-    {
-        <h3>Job Results:</h3>
-        <ul>
-            @foreach (var job in Model)
-            {
-                <li style="margin-bottom: 15px;">
-                    <strong>@job.Title</strong><br />
-                    <em>@job.CompanyName</em> - @job.Location<br />
-                    <small>Category: @job.Category</small><br />
-                    <p>@job.Description</p>
-                    <hr />
-                </li>
-            }
-        </ul>
-    }
-    else if (!string.IsNullOrEmpty(Context.Request.Query["searchQuery"]))
-    {
-        <p>No jobs found for "@Context.Request.Query["searchQuery"]"</p>
-    }
 
     <!-- Dashboard Stats -->
     <div class="row text-white mb-4">
