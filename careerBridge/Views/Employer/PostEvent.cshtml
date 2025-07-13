@@ -1,5 +1,38 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model careerBridge.Models.JobListing
+
 @{
+    ViewBag.Title = "Post a Job";
+}
+
+<h2>Post a Job</h2>
+
+@using (Html.BeginForm("Create", "JobListings", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Title)
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter job title" })
+        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description)
+        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5, placeholder = "Enter job description" })
+        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Location)
+        @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter job location" })
+        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Salary)
+        @Html.TextBoxFor(m => m.Salary, new { @class = "form-control", placeholder = "Enter salary (optional)" })
+        @Html.ValidationMessageFor(m => m.Salary, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Post Job</button>
 }

@@ -12,6 +12,10 @@ namespace careerBridge.Models
 
         public string? Description { get; set; }
 
+        public int Salary { get; set; }
+
+        public int Location {  get; set; }
+
         public DateTime PostedOn { get; set; } = DateTime.Now;
 
         // Foreign key
