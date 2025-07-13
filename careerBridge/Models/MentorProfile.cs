@@ -29,6 +29,7 @@ namespace careerBridge.Models
         public string? CertificatePath { get; set; }
 
         // Navigation properties
+        public ICollection<StudentProfile> RequestedByStudents { get; set; } = new List<StudentProfile>();
         public ICollection<Event> Events { get; set; } = new List<Event>();
         public ICollection<Message> SentMessages { get; set; } = new List<Message>();
         public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();

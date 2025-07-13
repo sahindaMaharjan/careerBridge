@@ -24,10 +24,11 @@ namespace careerBridge.Models
         [Phone]
         public string Phone { get; set; } 
 
-        public string CollegeName { get; set; } 
+        public string CollegeName { get; set; }
 
 
         // Navigation
+        public ICollection<MentorProfile> RequestedMentors { get; set; } = new List<MentorProfile>();
         public ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
         public ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
         public ICollection<Message> SentMessages { get; set; } = new List<Message>();

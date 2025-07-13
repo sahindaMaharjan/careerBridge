@@ -1,4 +1,28 @@
-﻿@page
-@model careerBridge.Views.Student.BookMentorModel
-@{
-}
+﻿@model List<careerBridge.Models.BookMentorViewModel>
+
+   <h1>List of Mentors</h1>
+<table>
+    @foreach (var mentor in Model)
+    {
+        <tr>
+            <td>
+                <a asp-action="MentorDetails" asp-route-id="@mentor.MentorID">
+                    @mentor.FullName
+                </a>
+            </td>
+            <td>
+                @if (mentor.Requested)
+                {
+                    <button disabled>Requested</button>
+                }
+                else
+                {
+                    <form asp-action="SendMentorRequest" method="post">
+                        <input type="hidden" name="mentorId" value="@mentor.MentorID" />
+                        <button type="submit">Request Mentor</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+</table>

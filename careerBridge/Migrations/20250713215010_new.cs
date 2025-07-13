@@ -237,6 +237,8 @@ namespace careerBridge.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Salary = table.Column<int>(type: "int", nullable: false),
+                    Location = table.Column<int>(type: "int", nullable: false),
                     PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EmployerID = table.Column<int>(type: "int", nullable: false)
                 },
@@ -277,6 +279,32 @@ namespace careerBridge.Migrations
                         principalTable: "Mentors",
                         principalColumn: "MentorID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MentorRequests",
+                columns: table => new
+                {
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    MentorId = table.Column<int>(type: "int", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RequestedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MentorRequests", x => new { x.StudentId, x.MentorId });
+                    table.ForeignKey(
+                        name: "FK_MentorRequests_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "MentorID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MentorRequests_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "StudentID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -471,6 +499,11 @@ namespace careerBridge.Migrations
                 column: "EmployerID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MentorRequests_MentorId",
+                table: "MentorRequests",
+                column: "MentorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Mentors_UserID",
                 table: "Mentors",
                 column: "UserID",
@@ -536,6 +569,9 @@ namespace careerBridge.Migrations
 
             migrationBuilder.DropTable(
                 name: "JobApplications");
+
+            migrationBuilder.DropTable(
+                name: "MentorRequests");
 
             migrationBuilder.DropTable(
                 name: "Messages");

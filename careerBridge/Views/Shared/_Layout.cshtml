@@ -35,11 +35,10 @@
                                 {
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="Index">Dashboard</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="JobList">Jobs</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="JobApplications" asp-action="Index">My Applications</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="EventRegistration" asp-action="Index">My Events</a></li>
-                                    <a href="~/Identity/Account/Manage/EnableAuthenticator" class="btn btn-primary">
-                                        Enable Authenticator (Two-Factor Authentication)
-                                    </a>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="EventRegistration" asp-action="EventList">Events</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="BookMentor">Mentors</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="EventRegistration" asp-action="Community">Community</a></li>
+
                                 }
                                 else if (User.IsInRole("Employer"))
                                 {
@@ -76,6 +75,9 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><h6 class="dropdown-header">Hello, @User.Identity?.Name</h6></li>
+                                        <a href="~/Identity/Account/Manage/EnableAuthenticator" class="btn btn-primary">
+                                            Enable Authenticator (Two-Factor Authentication)
+                                        </a>                                     
                                         <li><a class="dropdown-item" href="#">Settings</a></li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>

@@ -11,6 +11,8 @@ var connectionString = builder.Configuration
     .GetConnectionString("careerBridgeDbConnection")
     ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
 
+builder.Services.AddScoped<JobSearchService>();
+
 // 2) Add DbContext (EF Core)
 builder.Services.AddDbContext<careerBridgeDb>(options =>
     options.UseSqlServer(connectionString));
