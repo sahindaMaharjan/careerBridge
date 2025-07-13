@@ -1,30 +1,41 @@
 ﻿using careerBridge.Models;
+using careerBridge.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using careerBridge.Services;
 
-
-public class StudentController : Controller
+namespace careerBridge.Controllers
 {
-    private readonly JobSearchService _jobSearchService;
-
-    public StudentController()
+    public class StudentController : Controller
     {
-        _jobSearchService = new JobSearchService();
-    }
+        private readonly JobSearchService _jobSearchService;
 
-    public async Task<IActionResult> Index(string searchQuery)
-    {
-        List<ExternalJobViewModel> jobList = new List<ExternalJobViewModel>();
-
-        if (!string.IsNullOrEmpty(searchQuery))
+        public StudentController()
         {
-            var json = await _jobSearchService.SearchJobsAsync(searchQuery);
-            jobList = JsonConvert.DeserializeObject<List<ExternalJobViewModel>>(json);
+            _jobSearchService = new JobSearchService();
         }
 
-        return View(jobList);
+        public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
+        {
+            List<ExternalJobViewModel> jobList = new();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                var json = await _jobSearchService.SearchJobsAsync(searchQuery, location, posted, minSalary);
+                var response = JsonConvert.DeserializeObject<JobApiResponse>(json);
+                if (response?.Data != null)
+                    jobList = response.Data;
+            }
+
+            return View(jobList);
+        }
+
+        [HttpPost]
+        public IActionResult Apply(string jobTitle, string company)
+        {
+            TempData["Message"] = $"You applied for: {jobTitle} at {company}";
+            return RedirectToAction("Index");
+        }
     }
 }
