@@ -1,28 +1,21 @@
-<<<<<<< HEAD
-=======
 using careerBridge.Areas.Identity.Data;
->>>>>>> 349ac193138a91b4fe1be58fd4526b6ebc73c69e
 using careerBridge.Models;
 using careerBridge.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-<<<<<<< HEAD
-=======
-﻿using careerBridge.Areas.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
->>>>>>> 349ac193138a91b4fe1be58fd4526b6ebc73c69e
 
 namespace careerBridge.Controllers
 {
     public class StudentController : Controller
     {
-<<<<<<< HEAD
         private readonly JobSearchService _jobSearchService;
+        private readonly careerBridgeDb _context;
 
-        public StudentController()
+        public StudentController(careerBridgeDb context)
         {
+            _context = context;
             _jobSearchService = new JobSearchService();
         }
 
@@ -46,19 +39,12 @@ namespace careerBridge.Controllers
         {
             TempData["Message"] = $"You applied for: {jobTitle} at {company}";
             return RedirectToAction("Index");
-=======
-        private readonly careerBridgeDb _context;
-        
-        public async Task<IActionResult> Index()
-        {
-            return View();
         }
 
-        public IActionResult JobList() 
+        public IActionResult JobList()
         {
             var jobs = _context.JobListings.ToList();
             return View(jobs);
->>>>>>> 349ac193138a91b4fe1be58fd4526b6ebc73c69e
         }
     }
 }
