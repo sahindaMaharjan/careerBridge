@@ -37,7 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Views\NewFolder\" />
     <Folder Include="wwwroot\certificates\" />
   </ItemGroup>
 

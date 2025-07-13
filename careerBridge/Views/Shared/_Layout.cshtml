@@ -36,6 +36,10 @@
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="Index">Dashboard</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="JobApplications" asp-action="Index">My Applications</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="EventRegistration" asp-action="Index">My Events</a></li>
+                                    <a href="~/Identity/Account/Manage/EnableAuthenticator" class="btn btn-primary">
+                                        Enable Authenticator (Two-Factor Authentication)
+                                    </a>
+
                                 }
                                 else if (User.IsInRole("Employer"))
                                 {
