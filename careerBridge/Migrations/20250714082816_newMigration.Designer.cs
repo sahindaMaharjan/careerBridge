@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using careerBridge.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    partial class careerBridgeDbModelSnapshot : ModelSnapshot
+    [Migration("20250714082816_newMigration")]
+    partial class newMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,16 +364,19 @@ namespace careerBridge.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventID"));
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployerID")
+                    b.Property<int?>("EmployerProfileEmployerID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MentorProfileMentorID")
+                    b.Property<int>("MentorID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -379,9 +385,9 @@ namespace careerBridge.Migrations
 
                     b.HasKey("EventID");
 
-                    b.HasIndex("EmployerID");
+                    b.HasIndex("EmployerProfileEmployerID");
 
-                    b.HasIndex("MentorProfileMentorID");
+                    b.HasIndex("MentorID");
 
                     b.ToTable("Events");
                 });
@@ -725,17 +731,17 @@ namespace careerBridge.Migrations
 
             modelBuilder.Entity("careerBridge.Models.Event", b =>
                 {
-                    b.HasOne("careerBridge.Models.EmployerProfile", "Employer")
+                    b.HasOne("careerBridge.Models.EmployerProfile", null)
                         .WithMany("Events")
-                        .HasForeignKey("EmployerID")
+                        .HasForeignKey("EmployerProfileEmployerID");
+
+                    b.HasOne("careerBridge.Models.MentorProfile", "Mentor")
+                        .WithMany("Events")
+                        .HasForeignKey("MentorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("careerBridge.Models.MentorProfile", null)
-                        .WithMany("Events")
-                        .HasForeignKey("MentorProfileMentorID");
-
-                    b.Navigation("Employer");
+                    b.Navigation("Mentor");
                 });
 
             modelBuilder.Entity("careerBridge.Models.EventRegistration", b =>

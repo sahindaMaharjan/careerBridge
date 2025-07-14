@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace careerBridge.Models
@@ -13,16 +15,15 @@ namespace careerBridge.Models
 
         public string? Description { get; set; }
 
-        public DateTime Date { get; set; }
         public DateTime EventDate { get; set; }
+
+        // — Employer posts this event now —
         [Required]
-        [ForeignKey("Mentor")]
-        public int MentorID { get; set; } // Changed from string to int
+        [ForeignKey(nameof(Employer))]
+        public int EmployerID { get; set; }
+        public EmployerProfile Employer { get; set; } = null!;
 
-        // Navigation
-        public MentorProfile Mentor { get; set; } = null!;
-
-        public ICollection<EventRegistration> EventRegistrations { get; set; } = new List<EventRegistration>();
-
+        public ICollection<EventRegistration> EventRegistrations { get; set; }
+            = new List<EventRegistration>();
     }
 }

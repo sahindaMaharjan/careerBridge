@@ -1,0 +1,22 @@
+﻿// File: Views/Student/Details.cshtml
+@model careerBridge.Models.Event
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <p><strong>Date:</strong> @Model.EventDate.ToString("yyyy-MM-dd")</p>
+    <p><strong>Posted By:</strong> @Model.Employer.CompanyName</p>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p><strong>Description:</strong></p>
+        <p>@Model.Description</p>
+    }
+</div>
+
+<p>
+    <a asp-action="Events" class="btn btn-secondary">← Back to Events</a>
+</p>

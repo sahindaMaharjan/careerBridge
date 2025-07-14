@@ -16,12 +16,16 @@
 <div class="container mt-5">
     <h1 class="text-success">Welcome, @username!</h1>
 
+    <p>
+        <a asp-controller="Student" asp-action="Events" class="btn btn-primary">
+            View Upcoming Events
+        </a>
+    </p>
+
     @if (TempData["Message"] != null)
     {
         <div class="alert alert-success">@TempData["Message"]</div>
     }
-
-    
 
     <h2>Search Jobs</h2>
     <form method="get" class="row g-3 mb-4">

@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250714075906_RemoveSenderEmployerIDFromMessages")]
-    partial class RemoveSenderEmployerIDFromMessages
+    [Migration("20250714083442_EmployerOwnsEvents")]
+    partial class EmployerOwnsEvents
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -364,19 +364,16 @@ namespace careerBridge.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventID"));
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmployerProfileEmployerID")
+                    b.Property<int>("EmployerID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MentorID")
+                    b.Property<int?>("MentorProfileMentorID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -385,9 +382,9 @@ namespace careerBridge.Migrations
 
                     b.HasKey("EventID");
 
-                    b.HasIndex("EmployerProfileEmployerID");
+                    b.HasIndex("EmployerID");
 
-                    b.HasIndex("MentorID");
+                    b.HasIndex("MentorProfileMentorID");
 
                     b.ToTable("Events");
                 });
@@ -731,17 +728,17 @@ namespace careerBridge.Migrations
 
             modelBuilder.Entity("careerBridge.Models.Event", b =>
                 {
-                    b.HasOne("careerBridge.Models.EmployerProfile", null)
+                    b.HasOne("careerBridge.Models.EmployerProfile", "Employer")
                         .WithMany("Events")
-                        .HasForeignKey("EmployerProfileEmployerID");
-
-                    b.HasOne("careerBridge.Models.MentorProfile", "Mentor")
-                        .WithMany("Events")
-                        .HasForeignKey("MentorID")
+                        .HasForeignKey("EmployerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Mentor");
+                    b.HasOne("careerBridge.Models.MentorProfile", null)
+                        .WithMany("Events")
+                        .HasForeignKey("MentorProfileMentorID");
+
+                    b.Navigation("Employer");
                 });
 
             modelBuilder.Entity("careerBridge.Models.EventRegistration", b =>

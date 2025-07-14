@@ -1,0 +1,32 @@
+﻿@model IEnumerable<careerBridge.Models.Event>
+
+@{
+    ViewData["Title"] = "Events";
+}
+
+<h2>Events</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Posted By</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var ev in Model)
+    {
+        <tr>
+            <td>@ev.Title</td>
+            <td>@ev.EventDate.ToString("yyyy-MM-dd")</td>
+            <td>@ev.Employer.CompanyName</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@ev.EventID">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
