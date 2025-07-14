@@ -1,26 +1,35 @@
-﻿@model List<careerBridge.Models.Message>
+﻿@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@model IEnumerable<careerBridge.Models.Message>
+@inject UserManager<careerBridgeUser> UserManager
+@inject SignInManager<careerBridgeUser> SignInManager
+
 @{
-    ViewData["Title"] = "Chat";
+    ViewData["Title"] = $"Chat with {ViewBag.OtherUser}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUserId = ViewBag.CurrentUserId as string;
     var chatUserId = ViewBag.ChatUserId as string;
-    var otherUser = ViewBag.OtherUser;
+    var otherUserFullname = ViewBag.OtherUser as string;
 }
 
-<h2>Chat with @otherUser</h2>
-<div class="border p-3 mb-3" style="height: 300px; overflow-y: auto;">
+<h2 class="mb-4">Chat with @otherUserFullname</h2>
+
+<div class="border rounded p-3 mb-4" style="height: 350px; overflow-y: auto;">
     @foreach (var msg in Model)
     {
-        <div class="mb-2 @(msg.SenderId == currentUserId ? "text-end" : "text-start")">
-            <span class="badge bg-secondary">@msg.Content</span><br />
-            <small class="text-muted">@msg.SentOn.ToString("hh:mm tt")</small>
+        bool isMine = msg.SenderId == currentUserId;
+        <div class="d-flex mb-2 @(isMine ? "justify-content-end" : "justify-content-start")">
+            <div class="p-2 rounded @(isMine ? "bg-primary text-white" : "bg-light")" style="max-width: 75%;">
+                <p class="mb-1">@msg.Content</p>
+                <small class="text-muted">@msg.SentOn.ToLocalTime():hh:mm tt</small>
+            </div>
         </div>
     }
 </div>
 
-<form asp-action="SendMessage" method="post">
+<form asp-action="SendMessage" method="post" class="d-flex">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="receiverId" value="@chatUserId" />
-    <div class="input-group">
-        <input name="content" class="form-control" required placeholder="Type message..." />
-        <button type="submit" class="btn btn-primary">Send</button>
-    </div>
+    <input type="text" name="content" class="form-control me-2" placeholder="Type your message..." required />
+    <button type="submit" class="btn btn-success">Send</button>
 </form>

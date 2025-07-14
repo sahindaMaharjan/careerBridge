@@ -1,5 +1,8 @@
-﻿using careerBridge.Areas.Identity.Data;
+﻿// File: Areas/Identity/Data/careerBridgeDb.cs
+using System;
+using System.Collections.Generic;
 using careerBridge.Models;
+using careerBridge.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +18,16 @@ namespace careerBridge.Areas.Identity.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Reply> Replies { get; set; }
         public DbSet<StudentProfile> Students { get; set; }
-
         public DbSet<EmployerProfile> Employers { get; set; }
         public DbSet<MentorProfile> Mentors { get; set; }
         public DbSet<JobListing> JobListings { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventRegistration> EventRegistrations { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
-        public DbSet<Message> Messages { get; set; } // ✅ Shared chat model
+        public DbSet<MentorSession> MentorSessions { get; set; }
+        public DbSet<MentorSessionRegistration> MentorSessionRegistrations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +60,12 @@ namespace careerBridge.Areas.Identity.Data
                 .HasOne(r => r.Post)
                 .WithMany(p => p.Replies)
                 .HasForeignKey(r => r.PostId)
+                .OnDelete(DeleteBehavior.Restrict);   // ← was Cascade
+
+            modelBuilder.Entity<Reply>()
+                .HasOne(r => r.User)
+                .WithMany()  // assuming careerBridgeUser has no Replies nav
+                .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // === STUDENT ID AUTO GEN ===
@@ -89,7 +99,7 @@ namespace careerBridge.Areas.Identity.Data
                 .HasForeignKey(er => er.EventID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // === SIMPLIFIED MESSAGE RELATION ===
+            // === MESSAGE RELATION ===
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
                 .WithMany()
@@ -102,6 +112,28 @@ namespace careerBridge.Areas.Identity.Data
                 .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // === MENTOR SESSION & REGISTRATION ===
+            modelBuilder.Entity<MentorSession>()
+                .HasMany(s => s.Registrations)
+                .WithOne(r => r.MentorSession)
+                .HasForeignKey(r => r.MentorSessionID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MentorSessionRegistration>()
+                .HasOne(r => r.Student)
+                .WithMany()
+                .HasForeignKey(r => r.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MentorSessionRegistration>()
+                .Property(r => r.Status)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<MentorSession>()
+                .HasOne(s => s.Mentor)
+                .WithMany(m => m.MentorSessions)
+                .HasForeignKey(s => s.MentorID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

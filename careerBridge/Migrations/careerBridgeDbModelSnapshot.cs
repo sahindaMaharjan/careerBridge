@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using careerBridge.Areas.Identity.Data;
 
@@ -12,11 +11,9 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250714095812_finalone")]
-    partial class finalone
+    partial class careerBridgeDbModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -367,20 +364,13 @@ namespace careerBridge.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmployerProfileEmployerID")
+                    b.Property<int>("EmployerID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MentorID")
+                    b.Property<int?>("MentorProfileMentorID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -390,9 +380,9 @@ namespace careerBridge.Migrations
 
                     b.HasKey("EventID");
 
-                    b.HasIndex("EmployerProfileEmployerID");
+                    b.HasIndex("EmployerID");
 
-                    b.HasIndex("MentorID");
+                    b.HasIndex("MentorProfileMentorID");
 
                     b.ToTable("Events");
                 });
@@ -476,7 +466,7 @@ namespace careerBridge.Migrations
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Salary")
+                    b.Property<decimal?>("Salary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Title")
@@ -526,6 +516,68 @@ namespace careerBridge.Migrations
                         .IsUnique();
 
                     b.ToTable("Mentors");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.MentorSession", b =>
+                {
+                    b.Property<int>("MentorSessionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MentorSessionID"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MentorID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SessionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("MentorSessionID");
+
+                    b.HasIndex("MentorID");
+
+                    b.ToTable("MentorSessions");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.MentorSessionRegistration", b =>
+                {
+                    b.Property<int>("RegistrationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegistrationID"));
+
+                    b.Property<int>("MentorSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("RegistrationID");
+
+                    b.HasIndex("MentorSessionID");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("MentorSessionRegistrations");
                 });
 
             modelBuilder.Entity("careerBridge.Models.Message", b =>
@@ -715,7 +767,7 @@ namespace careerBridge.Migrations
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -736,17 +788,17 @@ namespace careerBridge.Migrations
 
             modelBuilder.Entity("careerBridge.Models.Event", b =>
                 {
-                    b.HasOne("careerBridge.Models.EmployerProfile", null)
+                    b.HasOne("careerBridge.Models.EmployerProfile", "Employer")
                         .WithMany("Events")
-                        .HasForeignKey("EmployerProfileEmployerID");
-
-                    b.HasOne("careerBridge.Models.MentorProfile", "Mentor")
-                        .WithMany("Events")
-                        .HasForeignKey("MentorID")
+                        .HasForeignKey("EmployerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Mentor");
+                    b.HasOne("careerBridge.Models.MentorProfile", null)
+                        .WithMany("Events")
+                        .HasForeignKey("MentorProfileMentorID");
+
+                    b.Navigation("Employer");
                 });
 
             modelBuilder.Entity("careerBridge.Models.EventRegistration", b =>
@@ -807,6 +859,36 @@ namespace careerBridge.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.MentorSession", b =>
+                {
+                    b.HasOne("careerBridge.Models.MentorProfile", "Mentor")
+                        .WithMany("MentorSessions")
+                        .HasForeignKey("MentorID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Mentor");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.MentorSessionRegistration", b =>
+                {
+                    b.HasOne("careerBridge.Models.MentorSession", "MentorSession")
+                        .WithMany("Registrations")
+                        .HasForeignKey("MentorSessionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MentorSession");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("careerBridge.Models.Message", b =>
@@ -905,9 +987,16 @@ namespace careerBridge.Migrations
                 {
                     b.Navigation("Events");
 
+                    b.Navigation("MentorSessions");
+
                     b.Navigation("ReceivedMessages");
 
                     b.Navigation("SentMessages");
+                });
+
+            modelBuilder.Entity("careerBridge.Models.MentorSession", b =>
+                {
+                    b.Navigation("Registrations");
                 });
 
             modelBuilder.Entity("careerBridge.Models.StudentProfile", b =>
