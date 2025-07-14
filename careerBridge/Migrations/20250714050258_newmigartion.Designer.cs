@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250714015656_everything")]
-    partial class everything
+    [Migration("20250714050258_newmigartion")]
+    partial class newmigartion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -373,6 +373,9 @@ namespace careerBridge.Migrations
                     b.Property<int?>("EmployerProfileEmployerID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MentorID")
                         .HasColumnType("int");
 
@@ -458,6 +461,9 @@ namespace careerBridge.Migrations
 
                     b.Property<int>("EmployerID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsOpen")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Location")
                         .HasColumnType("int");

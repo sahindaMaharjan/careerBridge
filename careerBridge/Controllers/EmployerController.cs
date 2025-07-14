@@ -1,78 +1,131 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using careerBridge.Models;
+using careerBridge.Areas.Identity.Data;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace careerBridge.Controllers
 {
+    [Authorize(Roles = "Employer")]
     public class EmployerController : Controller
     {
-        public IActionResult Index()
+        private readonly careerBridgeDb _context;
+        private readonly UserManager<careerBridgeUser> _userManager;
+
+        public EmployerController(careerBridgeDb context, UserManager<careerBridgeUser> userManager)
         {
-            // TODO: replace with real data retrieval from database or services
+            _context = context;
+            _userManager = userManager;
+        }
+
+        // === Dashboard ===
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var employer = await _context.Employers
+                .FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound("Employer profile not found.");
+
+            var jobs = await _context.JobListings
+                .Where(j => j.EmployerID == employer.EmployerID)
+                .Include(j => j.Applications)
+                .ToListAsync();
+
+            var events = await _context.Events
+                .OrderByDescending(e => e.EventDate)
+                .Take(5)
+                .Include(e => e.EventRegistrations)
+                .ToListAsync();
+
+            var messages = await _context.Messages
+                .Where(m => m.SenderEmployerID == employer.EmployerID || m.ReceiverEmployerID == employer.EmployerID)
+                .OrderByDescending(m => m.SentOn)
+                .Take(5)
+                .ToListAsync();
+
             var model = new EmployerDashboardViewModel
             {
-                JobCount = 5,
-                ChatCount = 12,
-                EventCount = 3,
+                JobCount = jobs.Count,
+                EventCount = events.Count,
+                ChatCount = messages.Count,
 
-                Jobs = new[]
+                Jobs = jobs.Select(j => new JobViewModel
                 {
-                    new JobViewModel
-                    {
-                        Id = 1,
-                        Title = "Full-Stack Developer",
-                        PostedOn = DateTime.Today.AddDays(-10),
-                        ApplicantCount = 8,
-                        IsOpen = true
-                    },
-                    new JobViewModel
-                    {
-                        Id = 2,
-                        Title = "UI/UX Designer",
-                        PostedOn = DateTime.Today.AddDays(-20),
-                        ApplicantCount = 5,
-                        IsOpen = false
-                    }
-                },
+                    Id = j.JobListingID,
+                    Title = j.Title,
+                    PostedOn = j.PostedOn,
+                    ApplicantCount = j.Applications?.Count ?? 0,
+                    IsOpen = j.IsOpen
+                }).ToList(),
 
-                Events = new[]
+                Events = events.Select(e => new EventViewModel
                 {
-                    new EventViewModel
-                    {
-                        Id = 1,
-                        Name = "Career Fair",
-                        Date = DateTime.Today.AddDays(5),
-                        RegistrationCount = 25
-                    },
-                    new EventViewModel
-                    {
-                        Id = 2,
-                        Name = "Tech Talk",
-                        Date = DateTime.Today.AddDays(15),
-                        RegistrationCount = 40
-                    }
-                },
+                    Id = e.EventID,
+                    Name = e.Title,
+                    Date = e.EventDate,
+                    RegistrationCount = e.EventRegistrations?.Count() ?? 0
+                }).ToList(),
 
-                RecentChats = new[]
+                RecentChats = messages.Select(m => new ChatSummary
                 {
-                    new ChatSummary
-                    {
-                        StudentId = 101,
-                        StudentName = "Alice J.",
-                        LastMessageSnippet = "Thanks for your time",
-                        LastMessageTime = DateTime.Now.AddHours(-2)
-                    },
-                    new ChatSummary
-                    {
-                        StudentId = 102,
-                        StudentName = "Mark L.",
-                        LastMessageSnippet = "I sent my resume",
-                        LastMessageTime = DateTime.Now.AddHours(-5)
-                    }
-                }
+                    StudentId = m.ReceiverStudentID ?? 0,
+                    StudentName = m.StudentName,
+                    LastMessageSnippet = m.LastMessageSnippet,
+                    LastMessageTime = m.SentOn
+                }).ToList()
             };
 
             return View(model);
+        }
+
+        // === GET: PostJob ===
+        [HttpGet]
+        public IActionResult PostJob()
+        {
+            return View();
+        }
+
+        // === POST: PostJob ===
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PostJob(JobListing job)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+
+                var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+                if (employer == null)
+                {
+                    ModelState.AddModelError("", "Employer profile not found.");
+                    return View(job);
+                }
+
+                job.EmployerID = employer.EmployerID;
+                job.PostedOn = DateTime.Now;
+
+                _context.JobListings.Add(job);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Job posted successfully!";
+                return RedirectToAction("PostJobConfirmation");
+            }
+
+            return View(job);
+        }
+
+        // === GET: PostJobConfirmation ===
+        [HttpGet]
+        public IActionResult PostJobConfirmation()
+        {
+            return View();
         }
     }
 }

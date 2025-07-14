@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace careerBridge.Migrations
 {
     /// <inheritdoc />
-    public partial class everything : Migration
+    public partial class newmigartion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -262,6 +262,7 @@ namespace careerBridge.Migrations
                     Salary = table.Column<int>(type: "int", nullable: false),
                     Location = table.Column<int>(type: "int", nullable: false),
                     PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsOpen = table.Column<bool>(type: "bit", nullable: false),
                     EmployerID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -284,6 +285,7 @@ namespace careerBridge.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MentorID = table.Column<int>(type: "int", nullable: false),
                     EmployerProfileEmployerID = table.Column<int>(type: "int", nullable: true)
                 },

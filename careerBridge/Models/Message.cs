@@ -44,5 +44,16 @@ namespace careerBridge.Models
 
         [ForeignKey("ReceiverEmployerID")]
         public EmployerProfile? ReceiverEmployer { get; set; }
+
+        // ✅ Computed Properties (not stored in DB)
+        [NotMapped]
+        public string StudentName =>
+            ReceiverStudent?.FullName ??
+            SenderStudent?.FullName ??
+            "Unknown";
+
+        [NotMapped]
+        public string LastMessageSnippet =>
+            Content?.Length > 50 ? Content.Substring(0, 50) + "..." : Content;
     }
 }
