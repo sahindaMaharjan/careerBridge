@@ -1,4 +1,6 @@
-﻿using System;
+﻿// File: Controllers/StudentController.cs
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -33,38 +35,48 @@ namespace careerBridge.Controllers
             _context = context;
             _userManager = userManager;
             _jobSearchService = jobSearchService;
-            _eventbriteToken = config["Eventbrite:Token"];
+            _eventbriteToken = config["Eventbrite:Token"]!;
         }
 
+        // ────────────────────────────────────────────────────────────────────────────
         // External Eventbrite API
+        // ────────────────────────────────────────────────────────────────────────────
         [HttpGet]
-        public async Task<IActionResult> EventList(string keyword, string location, string startDate, string endDate)
+        public async Task<IActionResult> EventList(
+            string keyword,
+            string location,
+            string startDate,
+            string endDate)
         {
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _eventbriteToken);
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _eventbriteToken);
 
-            var searchEvents = new List<EventItem>();
-            var defaultEvents = new List<EventItem>();
-
-            // ... search logic omitted for brevity ...
+            // … your existing Eventbrite search logic …
 
             var model = new EventListViewModel
             {
-                SearchResults = searchEvents,
-                DefaultEvents = defaultEvents
+                SearchResults = new List<EventItem>(),
+                DefaultEvents = new List<EventItem>()
             };
-
             return View(model);
         }
 
-        // External job search
+        // ────────────────────────────────────────────────────────────────────────────
+        // External Job Search
+        // ────────────────────────────────────────────────────────────────────────────
         [HttpGet]
-        public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
+        public async Task<IActionResult> Index(
+            string searchQuery,
+            string location,
+            int? posted,
+            int? minSalary)
         {
             var jobList = new List<ExternalJobViewModel>();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                var json = await _jobSearchService.SearchJobsAsync(searchQuery, location, posted, minSalary);
+                var json = await _jobSearchService
+                                      .SearchJobsAsync(searchQuery, location, posted, minSalary);
                 var response = JsonConvert.DeserializeObject<JobApiResponse>(json);
                 if (response?.Data != null)
                     jobList = response.Data;
@@ -72,40 +84,40 @@ namespace careerBridge.Controllers
             return View(jobList);
         }
 
-        // Apply for an external or internal job
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public IActionResult Apply(string jobTitle, string company)
         {
             TempData["Message"] = $"You applied for: {jobTitle} at {company}";
             return RedirectToAction(nameof(JobList));
         }
 
-        // Internal jobs posted by employers
+        // ────────────────────────────────────────────────────────────────────────────
+        // Internal Jobs Posted by Employers
+        // ────────────────────────────────────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> JobList()
         {
             var jobs = await _context.JobListings
-                .Include(j => j.Employer)
-                .OrderByDescending(j => j.PostedOn)
-                .ToListAsync();
-
+                                     .Include(j => j.Employer)
+                                     .OrderByDescending(j => j.PostedOn)
+                                     .ToListAsync();
             return View(jobs);
         }
 
-        // Details for a single job
         [HttpGet]
         public async Task<IActionResult> JobDetails(int id)
         {
             var job = await _context.JobListings
-                .Include(j => j.Employer)
-                .FirstOrDefaultAsync(j => j.JobListingID == id);
+                                    .Include(j => j.Employer)
+                                    .FirstOrDefaultAsync(j => j.JobListingID == id);
             if (job == null)
                 return NotFound();
             return View(job);
         }
 
-        // Mentor booking - GET
+        // ────────────────────────────────────────────────────────────────────────────
+        // Mentor Booking
+        // ────────────────────────────────────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> BookMentor()
         {
@@ -124,73 +136,145 @@ namespace careerBridge.Controllers
             {
                 MentorID = m.MentorID,
                 FullName = m.FullName,
-                Requested = student.RequestedMentors.Any(rm => rm.MentorID == m.MentorID)
+                Requested = student.RequestedMentors
+                                 .Any(rm => rm.MentorID == m.MentorID)
             }).ToList();
 
             return View(model);
         }
 
-        // Mentor booking - POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SendMentorRequest(int mentorId)
         {
-            var userId = _userManager.GetUserId(User);
-            if (userId == null)
-                return Unauthorized();
-
+            var userId = _userManager.GetUserId(User)!;
             var student = await _context.Students
                 .Include(s => s.RequestedMentors)
                 .FirstOrDefaultAsync(s => s.UserID == userId);
             if (student == null)
                 return NotFound();
 
-            var mentor = await _context.Mentors.FindAsync(mentorId);
-            if (mentor == null)
-                return NotFound();
-
             if (!student.RequestedMentors.Any(rm => rm.MentorID == mentorId))
             {
-                student.RequestedMentors.Add(mentor);
-                await _context.SaveChangesAsync();
+                var mentor = await _context.Mentors.FindAsync(mentorId);
+                if (mentor != null)
+                {
+                    student.RequestedMentors.Add(mentor);
+                    await _context.SaveChangesAsync();
+                }
             }
-
             return RedirectToAction(nameof(BookMentor));
         }
 
-        // Mentor details
         [HttpGet]
         public async Task<IActionResult> MentorDetails(int id)
         {
-            var mentor = await _context.Mentors.FirstOrDefaultAsync(m => m.MentorID == id);
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m => m.MentorID == id);
             if (mentor == null)
                 return NotFound();
             return View(mentor);
         }
 
-        // Student view of employer-posted events
+        // ────────────────────────────────────────────────────────────────────────────
+        // Employer-Posted Events
+        // ────────────────────────────────────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> Events()
         {
             var events = await _context.Events
-                .Include(e => e.Employer)
-                .OrderBy(e => e.EventDate)
-                .ToListAsync();
-
+                                       .Include(e => e.Employer)
+                                       .OrderBy(e => e.EventDate)
+                                       .ToListAsync();
             return View(events);
         }
 
-        // Student details for a single event
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var ev = await _context.Events
-                .Include(e => e.Employer)
-                .FirstOrDefaultAsync(e => e.EventID == id);
+                                   .Include(e => e.Employer)
+                                   .FirstOrDefaultAsync(e => e.EventID == id);
             if (ev == null)
                 return NotFound();
-
             return View(ev);
+        }
+
+        // ────────────────────────────────────────────────────────────────────────────
+        // Mentor Sessions (New Feature)
+        // ────────────────────────────────────────────────────────────────────────────
+
+        // GET: /Student/AvailableSessions
+        [HttpGet]
+        public async Task<IActionResult> AvailableSessions()
+        {
+            var me = await _userManager.GetUserAsync(User)!;
+
+            var sessions = await _context.MentorSessions
+                .Include(s => s.Mentor)
+                .Include(s => s.Registrations)
+                .ToListAsync();
+
+            var model = sessions.Select(s =>
+            {
+                var mine = s.Registrations
+                            .FirstOrDefault(r => r.StudentId == me.Id);
+
+                return new AvailableSessionViewModel
+                {
+                    MentorSessionID = s.MentorSessionID,
+                    Title = s.Title,
+                    SessionDate = s.SessionDate,
+                    MentorName = s.Mentor.FullName,
+                    Capacity = s.Capacity,
+                    AcceptedCount = s.Registrations
+                                          .Count(r => r.Status == RegistrationStatus.Accepted),
+                    MyStatus = mine?.Status
+                };
+            }).ToList();
+
+            return View(model);
+        }
+
+        // POST: /Student/RegisterSession
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterSession(int sessionId)
+        {
+            var me = await _userManager.GetUserAsync(User)!;
+
+            bool exists = await _context.MentorSessionRegistrations
+                .AnyAsync(r => r.MentorSessionID == sessionId && r.StudentId == me.Id);
+
+            if (exists)
+            {
+                TempData["Error"] = "You’ve already requested this session.";
+            }
+            else
+            {
+                _context.MentorSessionRegistrations.Add(new MentorSessionRegistration
+                {
+                    MentorSessionID = sessionId,
+                    StudentId = me.Id
+                });
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Session request sent!";
+            }
+
+            return RedirectToAction(nameof(AvailableSessions));
+        }
+
+        // GET: /Student/MyRegistrations
+        [HttpGet]
+        public async Task<IActionResult> MyRegistrations()
+        {
+            var me = await _userManager.GetUserAsync(User)!;
+
+            var regs = await _context.MentorSessionRegistrations
+                .Where(r => r.StudentId == me.Id)
+                .Include(r => r.MentorSession)
+                    .ThenInclude(s => s.Mentor)
+                .ToListAsync();
+
+            return View(regs);
         }
     }
 }

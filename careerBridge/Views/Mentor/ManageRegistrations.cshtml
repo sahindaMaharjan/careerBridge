@@ -1,0 +1,74 @@
+﻿@model careerBridge.Models.MentorSession
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Manage Registrations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Registrations for “@Model.Title”</h2>
+
+@if (!Model.Registrations.Any())
+{
+    <div class="alert alert-info">
+        No one has requested this session yet.
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Requested On</th>
+                <th>Status</th>
+                <th>Chat</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Registrations)
+            {
+                <tr>
+                    <td>@r.Student.Fullname</td>
+                    <td>@r.RequestedOn:g</td>
+                    <td>
+                        <span class="badge @(r.Status == careerBridge.Models.RegistrationStatus.Pending
+                                                                            ? "bg-secondary"
+                                                                            : r.Status == careerBridge.Models.RegistrationStatus.Accepted
+                                                                              ? "bg-success"
+                                                                              : "bg-danger")">
+                    @r.Status
+                </span>
+            </td>
+            <td>
+                @if (r.Status == careerBridge.Models.RegistrationStatus.Accepted)
+                        {
+                            <a asp-controller="Chat"
+                               asp-action="Index"
+                               asp-route-userId="@r.Student.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Chat
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (r.Status == careerBridge.Models.RegistrationStatus.Pending)
+                        {
+                            <form asp-action="UpdateRegistration" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="registrationId" value="@r.RegistrationID" />
+                                <button name="status" value="Accepted" class="btn btn-sm btn-success">Accept</button>
+                                <button name="status" value="Denied" class="btn btn-sm btn-danger ms-1">Deny</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<p>
+    <a asp-action="Sessions" class="btn btn-secondary">← Back to Sessions</a>
+</p>

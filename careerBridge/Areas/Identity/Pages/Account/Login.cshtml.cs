@@ -98,7 +98,7 @@ namespace careerBridge.Areas.Identity.Pages.Account
                     }
                     else if (roles.Contains("Mentor"))
                     {
-                        return LocalRedirect("~/Home/Mentor");
+                        return LocalRedirect("~/Mentor/Dashboard");
                     }
                     else if (roles.Contains("Employer"))
                     {

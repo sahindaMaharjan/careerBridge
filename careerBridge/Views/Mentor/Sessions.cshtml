@@ -1,0 +1,52 @@
+﻿@model IEnumerable<careerBridge.Models.MentorSession>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "My Sessions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Your Mentor Sessions</h2>
+
+<p>
+    <a asp-action="CreateSession" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Create New Session
+    </a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have not created any sessions yet.
+    </div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Capacity</th>
+                <th>Registered</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.Title</td>
+                    <td>@s.SessionDate:MMM d, yyyy h:mm tt</td>
+                    <td>@s.Capacity</td>
+                    <td>@s.Registrations.Count()</td>
+                    <td>
+                        <a asp-action="ManageRegistrations" asp-route-id="@s.MentorSessionID" class="btn btn-sm btn-outline-secondary">
+                            Manage
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
