@@ -1,0 +1,65 @@
+﻿@model List<careerBridge.Models.AvailableSessionViewModel>
+@using careerBridge.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Available Mentor Sessions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No sessions are currently scheduled.
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var s in Model)
+        {
+            <div class="col-12">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@s.Title</h5>
+                        <p class="card-text">
+                            <strong>Date:</strong> @s.SessionDate:MMM d, yyyy h:mm tt<br />
+                            <strong>Mentor:</strong> @s.MentorName<br />
+                            <strong>Capacity:</strong> @s.AcceptedCount / @s.Capacity
+                        </p>
+
+                        @* Show the appropriate badge or button *@
+                        @if (s.MyStatus == null)
+                        {
+                            <form asp-action="RegisterSession" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="sessionId" value="@s.MentorSessionID" />
+                                <button type="submit"
+                                        class="btn btn-primary"
+                                        @(s.AcceptedCount >= s.Capacity ? "disabled" : "")>
+                                    @(s.AcceptedCount >= s.Capacity
+                                                            ? "Full"
+                                                            : "Request to Join")
+                    </button>
+                </form>
+                                }
+                        else if (s.MyStatus == RegistrationStatus.Pending)
+                        {
+                            <span class="badge bg-warning">Pending</span>
+                        }
+                        else if (s.MyStatus == RegistrationStatus.Accepted)
+                        {
+                            <span class="badge bg-success">Accepted</span>
+                        }
+                        else if (s.MyStatus == RegistrationStatus.Denied)
+                        {
+                            <span class="badge bg-danger">Denied</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

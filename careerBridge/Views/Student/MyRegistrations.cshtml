@@ -1,0 +1,68 @@
+﻿@model IEnumerable<careerBridge.Models.MentorSessionRegistration>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "My Session Registrations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">My Session Registrations</h2>
+
+@if (!Model.Any())
+{
+    <p>You haven’t registered for any sessions yet.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Date</th>
+                <th>Mentor</th>
+                <th>Status</th>
+                <th>Requested On</th>
+                <th>Chat</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.MentorSession.Title</td>
+                    <td>@r.MentorSession.SessionDate:MMM d, yyyy h:mm tt</td>
+                    <td>@r.MentorSession.Mentor.FullName</td>
+                    <td>
+                        @switch (r.Status)
+                        {
+                            case careerBridge.Models.RegistrationStatus.Pending:
+                                <span class="badge bg-secondary">Pending</span>
+                                ;
+                                break;
+                            case careerBridge.Models.RegistrationStatus.Accepted:
+                                <span class="badge bg-success">Accepted</span>
+                                ;
+                                break;
+                            case careerBridge.Models.RegistrationStatus.Denied:
+                                <span class="badge bg-danger">Denied</span>
+                                ;
+                                break;
+                        }
+                    </td>
+                    <td>@r.RequestedOn:g</td>
+                    <td>
+                        @if (r.Status == careerBridge.Models.RegistrationStatus.Accepted)
+                        {
+                            <a asp-controller="Chat"
+                               asp-action="Index"
+                               asp-route-userId="@r.MentorSession.Mentor.UserID"
+                               class="btn btn-sm btn-primary">
+                                Chat with Mentor
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

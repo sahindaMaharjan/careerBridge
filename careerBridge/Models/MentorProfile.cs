@@ -1,37 +1,46 @@
-﻿using careerBridge.Areas.Identity.Data;
-using Microsoft.Extensions.Logging;
+﻿// File: Models/MentorProfile.cs
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
+using careerBridge.Areas.Identity.Data;
 
 namespace careerBridge.Models
 {
     public class MentorProfile
     {
         [Key]
-        public int MentorID { get; set; }  // was string, now int
-
-        public string UserID { get; set; }
-
-        [ForeignKey("UserID")]
-        public careerBridgeUser User { get; set; }
+        public int MentorID { get; set; }
 
         [Required]
-        public string FullName { get; set; }
+        public string UserID { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(UserID))]
+        public careerBridgeUser User { get; set; } = null!;
+
+        [Required]
+        public string FullName { get; set; } = string.Empty;
 
         [Required, EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        [Required]
-        [Phone]
-        public string Phone { get; set; }
+        [Required, Phone]
+        public string Phone { get; set; } = string.Empty;
+
         public string? ExpertiseArea { get; set; }
         public string? CertificatePath { get; set; }
 
-        // Navigation properties
-        public ICollection<StudentProfile> RequestedByStudents { get; set; } = new List<StudentProfile>();
-        public ICollection<Event> Events { get; set; } = new List<Event>();
-        public ICollection<Message> SentMessages { get; set; } = new List<Message>();
-        public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
+        // Existing navigation
+        public ICollection<StudentProfile> RequestedByStudents { get; set; }
+            = new List<StudentProfile>();
+        public ICollection<Event> Events { get; set; }
+            = new List<Event>();
+        public ICollection<Message> SentMessages { get; set; }
+            = new List<Message>();
+        public ICollection<Message> ReceivedMessages { get; set; }
+            = new List<Message>();
+
+        // ← Add this for your MentorSessions:
+        public ICollection<MentorSession> MentorSessions { get; set; }
+            = new List<MentorSession>();
     }
 }

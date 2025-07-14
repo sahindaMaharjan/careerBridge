@@ -16,6 +16,7 @@ namespace careerBridge.Controllers
         }
 
         [HttpGet]
+
         [Route("Test/Eventbrite")]
         public async Task<IActionResult> CheckToken()
         {
