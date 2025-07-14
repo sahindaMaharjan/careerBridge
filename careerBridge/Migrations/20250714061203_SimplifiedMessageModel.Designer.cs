@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using careerBridge.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    partial class careerBridgeDbModelSnapshot : ModelSnapshot
+    [Migration("20250714061203_SimplifiedMessageModel")]
+    partial class SimplifiedMessageModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -538,11 +541,11 @@ namespace careerBridge.Migrations
                     b.Property<int?>("MentorProfileMentorID1")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReceiverId")
+                    b.Property<string>("ReceiverUserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("SenderId")
+                    b.Property<string>("SenderUserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -565,9 +568,9 @@ namespace careerBridge.Migrations
 
                     b.HasIndex("MentorProfileMentorID1");
 
-                    b.HasIndex("ReceiverId");
+                    b.HasIndex("ReceiverUserID");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("SenderUserID");
 
                     b.HasIndex("StudentProfileStudentID");
 
@@ -815,13 +818,13 @@ namespace careerBridge.Migrations
 
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "Receiver")
                         .WithMany()
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("ReceiverUserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderId")
+                        .HasForeignKey("SenderUserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

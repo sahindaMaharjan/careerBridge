@@ -11,6 +11,7 @@ namespace careerBridge.Areas.Identity.Data
             : base(options)
         {
         }
+
         public DbSet<Post> Posts { get; set; }
         public DbSet<Reply> Replies { get; set; }
         public DbSet<StudentProfile> Students { get; set; }
@@ -20,17 +21,19 @@ namespace careerBridge.Areas.Identity.Data
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventRegistration> EventRegistrations { get; set; }
-        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Message> Messages { get; set; } // ✅ Shared chat model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Configure many-to-many join table between Students and Mentors
+
+            // === STUDENT ↔ MENTOR RELATIONSHIP ===
             modelBuilder.Entity<StudentProfile>()
                 .HasMany(s => s.RequestedMentors)
                 .WithMany(m => m.RequestedByStudents)
                 .UsingEntity<Dictionary<string, object>>(
-                    "MentorRequests", // join table name
+                    "MentorRequests",
                     j => j.HasOne<MentorProfile>()
                           .WithMany()
                           .HasForeignKey("MentorId")
@@ -41,27 +44,25 @@ namespace careerBridge.Areas.Identity.Data
                           .OnDelete(DeleteBehavior.Restrict),
                     j =>
                     {
-                        j.HasKey("StudentId", "MentorId");  // composite key
-                        j.Property<DateTime>("RequestedAt")
-                            .HasDefaultValueSql("GETDATE()"); // set current time by default
-                        j.Property<bool>("IsApproved")
-                            .HasDefaultValue(false); // default false
+                        j.HasKey("StudentId", "MentorId");
+                        j.Property<DateTime>("RequestedAt").HasDefaultValueSql("GETDATE()");
+                        j.Property<bool>("IsApproved").HasDefaultValue(false);
                     }
                 );
 
-            // Disable cascade delete on Replies -> Posts
+            // === REPLY CASCADE OFF ===
             modelBuilder.Entity<Reply>()
                 .HasOne(r => r.Post)
                 .WithMany(p => p.Replies)
                 .HasForeignKey(r => r.PostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Auto-generate Student ID
+            // === STUDENT ID AUTO GEN ===
             modelBuilder.Entity<StudentProfile>()
                 .Property(s => s.StudentID)
                 .ValueGeneratedOnAdd();
 
-            // --- JobApplication ---
+            // === JOB APPLICATION RULES ===
             modelBuilder.Entity<JobApplication>()
                 .HasOne(ja => ja.Student)
                 .WithMany(s => s.JobApplications)
@@ -74,7 +75,7 @@ namespace careerBridge.Areas.Identity.Data
                 .HasForeignKey(ja => ja.JobListingID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // --- EventRegistration ---
+            // === EVENT REGISTRATION RULES ===
             modelBuilder.Entity<EventRegistration>()
                 .HasOne(er => er.Student)
                 .WithMany(s => s.EventRegistrations)
@@ -87,42 +88,19 @@ namespace careerBridge.Areas.Identity.Data
                 .HasForeignKey(er => er.EventID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // --- Messages ---
+            // === SIMPLIFIED MESSAGE RELATION ===
             modelBuilder.Entity<Message>()
-                .HasOne(m => m.SenderStudent)
-                .WithMany(s => s.SentMessages)
-                .HasForeignKey(m => m.SenderStudentID)
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
-                .HasOne(m => m.ReceiverStudent)
-                .WithMany(s => s.ReceivedMessages)
-                .HasForeignKey(m => m.ReceiverStudentID)
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.SenderMentor)
-                .WithMany(men => men.SentMessages)
-                .HasForeignKey(m => m.SenderMentorID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.ReceiverMentor)
-                .WithMany(men => men.ReceivedMessages)
-                .HasForeignKey(m => m.ReceiverMentorID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.SenderEmployer)
-                .WithMany(emp => emp.SentMessages)
-                .HasForeignKey(m => m.SenderEmployerID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.ReceiverEmployer)
-                .WithMany(emp => emp.ReceivedMessages)
-                .HasForeignKey(m => m.ReceiverEmployerID)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
