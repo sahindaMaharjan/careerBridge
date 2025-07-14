@@ -12,13 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-<<<<<<<< HEAD:careerBridge/Migrations/20250714010813_final.Designer.cs
-    [Migration("20250714010813_final")]
+    [Migration("20250714041830_final")]
     partial class final
-========
-    [Migration("20250714015656_everything")]
-    partial class everything
->>>>>>>> b49b81b9189c05f634cbaf97b910b06acead0995:careerBridge/Migrations/20250714015656_everything.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

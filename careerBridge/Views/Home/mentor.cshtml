@@ -1,13 +1,20 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
+@inject SignInManager<careerBridgeUser> SignInManager
+
+@{
     ViewData["Title"] = "Mentor Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Or your layout file
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var username = currentUser?.Fullname ?? "Mentor";
 }
 
 <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
     <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-primary">Welcome, Mentor!</h1>
+        <h1 class="display-5 fw-bold text-primary">Welcome, @username!</h1>
         <p class="lead text-secondary">Manage your mentees, schedule sessions, and share your expertise.</p>
     </div>
 

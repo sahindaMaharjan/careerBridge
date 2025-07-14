@@ -1,4 +1,4 @@
-using careerBridge.Areas.Identity.Data;
+﻿using careerBridge.Areas.Identity.Data;
 using careerBridge.Models;
 using careerBridge.Services;
 using Microsoft.AspNetCore.Identity;
@@ -29,9 +29,76 @@ namespace careerBridge.Controllers
             _eventbriteToken = config["Eventbrite:Token"];
         }
 
-        // EVENT LIST USING EVENTBRITE API
-        [HttpGet]       
+        // ✅ FIXED EVENT LIST METHOD
+        [HttpGet]
+        public async Task<IActionResult> EventList(string keyword, string location, string startDate, string endDate)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _eventbriteToken);
 
+            var searchEvents = new List<EventItem>();
+            var defaultEvents = new List<EventItem>();
+
+            // === SEARCHED EVENTS ===
+            if (!string.IsNullOrEmpty(keyword) || !string.IsNullOrEmpty(location) || !string.IsNullOrEmpty(startDate) || !string.IsNullOrEmpty(endDate))
+            {
+                var searchParams = new List<string>();
+
+                if (!string.IsNullOrEmpty(keyword))
+                    searchParams.Add($"q={Uri.EscapeDataString(keyword)}");
+
+                if (!string.IsNullOrEmpty(location))
+                    searchParams.Add($"location.address={Uri.EscapeDataString(location)}");
+
+                if (!string.IsNullOrEmpty(startDate))
+                    searchParams.Add($"start_date.range_start={Uri.EscapeDataString(startDate)}");
+
+                if (!string.IsNullOrEmpty(endDate))
+                    searchParams.Add($"start_date.range_end={Uri.EscapeDataString(endDate)}");
+
+                var searchUrl = "https://www.eventbriteapi.com/v3/events/search/";
+                if (searchParams.Count > 0)
+                    searchUrl += "?" + string.Join("&", searchParams) + "&expand=venue";
+
+                var searchResponse = await client.GetAsync(searchUrl);
+                if (searchResponse.IsSuccessStatusCode)
+                {
+                    var json = await searchResponse.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<eventbriteResponse>(json);
+                    searchEvents = result?.events ?? new List<EventItem>();
+                }
+                else
+                {
+                    var errorJson = await searchResponse.Content.ReadAsStringAsync();
+                    TempData["Error"] = $"Error fetching search events: {searchResponse.StatusCode} - {errorJson}";
+                }
+            }
+
+            // === DEFAULT EVENTS FALLBACK ===
+            var defaultUrl = "https://www.eventbriteapi.com/v3/events/search/?q=tech&location.address=Canada&expand=venue";
+
+            var defaultResponse = await client.GetAsync(defaultUrl);
+
+            if (defaultResponse.IsSuccessStatusCode)
+            {
+                var json = await defaultResponse.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<eventbriteResponse>(json);
+                defaultEvents = result?.events ?? new List<EventItem>();
+            }
+            else
+            {
+                var errorJson = await defaultResponse.Content.ReadAsStringAsync();
+                TempData["Error"] = $"Error fetching default events: {defaultResponse.StatusCode} - {errorJson}";
+            }
+
+            var model = new EventListViewModel
+            {
+                SearchResults = searchEvents,
+                DefaultEvents = defaultEvents
+            };
+
+            return View(model);
+        }
 
         // JOB LIST FROM EXTERNAL API
         public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
@@ -121,9 +188,7 @@ namespace careerBridge.Controllers
 
         public async Task<IActionResult> MentorDetails(int id)
         {
-            var mentor = await _context.Mentors
-                .FirstOrDefaultAsync(m => m.MentorID == id);
-
+            var mentor = await _context.Mentors.FirstOrDefaultAsync(m => m.MentorID == id);
             if (mentor == null)
                 return NotFound();
 

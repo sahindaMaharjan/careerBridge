@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace careerBridge.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:careerBridge/Migrations/20250714010813_final.cs
     public partial class final : Migration
-========
-    public partial class everything : Migration
->>>>>>>> b49b81b9189c05f634cbaf97b910b06acead0995:careerBridge/Migrations/20250714015656_everything.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
