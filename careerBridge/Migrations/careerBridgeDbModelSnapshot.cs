@@ -463,14 +463,13 @@ namespace careerBridge.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Salary")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()

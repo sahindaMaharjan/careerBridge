@@ -44,7 +44,9 @@ namespace careerBridge.Controllers
                 .ToListAsync();
 
             var messages = await _context.Messages
-                .Where(m => m.SenderEmployerID == employer.EmployerID || m.ReceiverEmployerID == employer.EmployerID)
+                .Where(m => m.SenderId == user.Id || m.ReceiverId == user.Id)
+                .Include(m => m.Sender)
+                .Include(m => m.Receiver)
                 .OrderByDescending(m => m.SentOn)
                 .Take(5)
                 .ToListAsync();
@@ -74,9 +76,8 @@ namespace careerBridge.Controllers
 
                 RecentChats = messages.Select(m => new ChatSummary
                 {
-                    StudentId = m.ReceiverStudentID ?? 0,
-                    StudentName = m.StudentName,
-                    LastMessageSnippet = m.LastMessageSnippet,
+                    StudentName = m.SenderId == user.Id ? m.Receiver.Fullname : m.Sender.Fullname,
+                    LastMessageSnippet = m.Content.Length > 50 ? m.Content.Substring(0, 50) + "..." : m.Content,
                     LastMessageTime = m.SentOn
                 }).ToList()
             };
