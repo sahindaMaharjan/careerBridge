@@ -12,13 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-<<<<<<<< HEAD:careerBridge/Migrations/20250714061919_newmigration.Designer.cs
-    [Migration("20250714061919_newmigration")]
-    partial class newmigration
-========
-    [Migration("20250714075906_RemoveSenderEmployerIDFromMessages")]
-    partial class RemoveSenderEmployerIDFromMessages
->>>>>>>> 93444514d44dbf1a3958556141ceae0b08b44382:careerBridge/Migrations/20250714075906_RemoveSenderEmployerIDFromMessages.Designer.cs
+    [Migration("20250714083638_updadatedmigartion")]
+    partial class updadatedmigartion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

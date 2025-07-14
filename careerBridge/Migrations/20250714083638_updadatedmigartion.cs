@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace careerBridge.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:careerBridge/Migrations/20250714061919_newmigration.cs
-    public partial class newmigration : Migration
-========
-    public partial class RemoveSenderEmployerIDFromMessages : Migration
->>>>>>>> 93444514d44dbf1a3958556141ceae0b08b44382:careerBridge/Migrations/20250714075906_RemoveSenderEmployerIDFromMessages.cs
+    public partial class updadatedmigartion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
