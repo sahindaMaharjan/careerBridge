@@ -6,20 +6,32 @@
 }
 
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>Put these codes in a safe place.</strong>
-    </p>
-    <p>
-        If you lose your device and don't have the recovery codes you will lose access to your account.
-    </p>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
-        {
-            <code class="recovery-code">@Model.RecoveryCodes[row]</code><text>&nbsp;</text><code class="recovery-code">@Model.RecoveryCodes[row + 1]</code><br />
-        }
+
+<div class="container mt-5">
+    <div class="card shadow rounded-4">
+        <div class="card-body p-4">
+            <h3 class="card-title text-primary mb-4">@ViewData["Title"]</h3>
+
+            <div class="alert alert-warning" role="alert">
+                <p class="mb-1">
+                    <strong>Put these codes in a safe place.</strong>
+                </p>
+                <p class="mb-0">
+                    If you lose your device and don't have the recovery codes, you will lose access to your account.
+                </p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="d-flex flex-wrap gap-3 mt-3">
+                        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
+                        {
+                            <span class="badge bg-secondary fs-6 px-3 py-2">@Model.RecoveryCodes[row]</span>
+                            <span class="badge bg-secondary fs-6 px-3 py-2">@Model.RecoveryCodes[row + 1]</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
