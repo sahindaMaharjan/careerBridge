@@ -370,6 +370,9 @@ namespace careerBridge.Migrations
                     b.Property<int?>("EmployerProfileEmployerID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MentorID")
                         .HasColumnType("int");
 
@@ -456,8 +459,12 @@ namespace careerBridge.Migrations
                     b.Property<int>("EmployerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Location")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsOpen")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");

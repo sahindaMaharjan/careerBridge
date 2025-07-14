@@ -14,7 +14,7 @@ namespace careerBridge.Models
         public string? Description { get; set; }
 
         public DateTime Date { get; set; }
-
+        public DateTime EventDate { get; set; }
         [Required]
         [ForeignKey("Mentor")]
         public int MentorID { get; set; } // Changed from string to int

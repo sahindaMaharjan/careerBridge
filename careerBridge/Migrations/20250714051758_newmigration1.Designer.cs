@@ -12,13 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-<<<<<<<< HEAD:careerBridge/Migrations/20250714050258_newmigartion.Designer.cs
-    [Migration("20250714050258_newmigartion")]
-    partial class newmigartion
-========
-    [Migration("20250714041830_final")]
-    partial class final
->>>>>>>> 065301d82e1097fc32fa4502a40be8fdc116839c:careerBridge/Migrations/20250714041830_final.Designer.cs
+    [Migration("20250714051758_newmigration1")]
+    partial class newmigration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -470,8 +465,9 @@ namespace careerBridge.Migrations
                     b.Property<bool>("IsOpen")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Location")
-                        .HasColumnType("int");
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");

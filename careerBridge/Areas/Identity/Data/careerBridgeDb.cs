@@ -15,6 +15,7 @@ namespace careerBridge.Areas.Identity.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Reply> Replies { get; set; }
         public DbSet<StudentProfile> Students { get; set; }
+
         public DbSet<EmployerProfile> Employers { get; set; }
         public DbSet<MentorProfile> Mentors { get; set; }
         public DbSet<JobListing> JobListings { get; set; }
