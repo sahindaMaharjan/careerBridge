@@ -1,7 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@model careerBridge.Models.MentorDashboardViewModel
+
+@using Microsoft.AspNetCore.Identity
 @using careerBridge.Areas.Identity.Data
 @inject UserManager<careerBridgeUser> UserManager
-@inject SignInManager<careerBridgeUser> SignInManager
 
 @{
     ViewData["Title"] = "Mentor Dashboard";
@@ -11,96 +12,161 @@
     var username = currentUser?.Fullname ?? "Mentor";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
     <!-- Header -->
     <div class="text-center mb-5">
         <h1 class="display-5 fw-bold text-primary">Welcome, @username!</h1>
-        <p class="lead text-secondary">Manage your mentees, schedule sessions, and share your expertise.</p>
+        <p class="lead text-secondary">Manage your mentees, schedule sessions, and review requests.</p>
     </div>
 
-    <!-- Quick Navigation Buttons -->
+    <!-- Quick Nav Buttons -->
     <div class="mb-4 text-center">
-        <a asp-controller="Mentor" asp-action="Sessions" class="btn btn-outline-primary me-2">
-            <i class="bi bi-calendar-event me-1"></i> Your Sessions
+        <a asp-action="Dashboard" class="btn btn-outline-primary me-2">
+            <i class="bi bi-speedometer2 me-1"></i> Dashboard
         </a>
-        <a asp-controller="Mentor" asp-action="CreateSession" class="btn btn-outline-success me-2">
-            <i class="bi bi-plus-circle me-1"></i> Create Session
+        <a asp-action="Sessions" class="btn btn-outline-primary me-2">
+            <i class="bi bi-calendar-event me-1"></i> Sessions
         </a>
-        <a asp-controller="BookMentor" asp-action="Index" class="btn btn-outline-secondary me-2">
-            <i class="bi bi-people-fill me-1"></i> View Mentees
+        <a asp-action="CreateSession" class="btn btn-outline-success me-2">
+            <i class="bi bi-plus-circle me-1"></i> New Session
         </a>
         <a asp-controller="Chat" asp-action="Index" class="btn btn-outline-info">
-            <i class="bi bi-chat-dots me-1"></i> Chat Inbox
+            <i class="bi bi-chat-dots me-1"></i> Chat
         </a>
     </div>
 
-    <div class="row">
-        <!-- Mentee List -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Your Mentees</h5>
-                </div>
+    <!-- Stats Cards -->
+    <div class="row mb-5 text-white">
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-center h-100">
                 <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Swikrit Khatiwada</li>
-                        <li class="list-group-item">Aayush Sharma</li>
-                        <li class="list-group-item">Priya Raut</li>
-                        <li class="list-group-item text-muted">+ View All</li>
-                    </ul>
+                    <i class="bi bi-people-fill fs-2"></i>
+                    <h5 class="card-title mt-2">Mentees</h5>
+                    <p class="display-6">@Model.Mentees.Count</p>
                 </div>
             </div>
         </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check-fill fs-2"></i>
+                    <h5 class="card-title mt-2">Upcoming Sessions</h5>
+                    <p class="display-6">@Model.UpcomingSessions.Count</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-circle-fill fs-2"></i>
+                    <h5 class="card-title mt-2">Pending</h5>
+                    <p class="display-6">@Model.PendingRegistrations.Count</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <!-- Upcoming Sessions -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+    <div class="row">
+        <!-- Mentees Panel -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Your Mentees</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @if (!Model.Mentees.Any())
+                    {
+                        <li class="list-group-item text-muted">No accepted mentees yet.</li>
+                    }
+                    else
+                    {
+                        @foreach (var mentee in Model.Mentees)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@mentee.Fullname</strong><br />
+                                    <small class="text-muted">@mentee.Email</small>
+                                </div>
+                                <a asp-controller="Chat"
+                                   asp-action="Index"
+                                   asp-route-userId="@mentee.Id"
+                                   class="btn btn-sm btn-light">
+                                    Chat
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Upcoming Sessions Panel -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Upcoming Sessions</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>With:</strong> Priya Raut</p>
-                    <p><strong>Date:</strong> June 20, 2025</p>
-                    <p><strong>Time:</strong> 3:00 PM – 4:00 PM</p>
-                    <a asp-controller="Mentor" asp-action="CreateSession" class="btn btn-outline-success w-100">
-                        Schedule New Session
-                    </a>
+                    @if (!Model.UpcomingSessions.Any())
+                    {
+                        <p class="text-muted">No upcoming sessions.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var s in Model.UpcomingSessions)
+                            {
+                                <li class="mb-3">
+                                    <strong>@s.Title</strong><br />
+                                    <small>@s.SessionDate:g</small><br />
+                                    <a asp-action="ManageRegistrations"
+                                       asp-route-id="@s.MentorSessionID"
+                                       class="btn btn-sm btn-light mt-1">
+                                        Manage
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </div>
             </div>
         </div>
 
-        <!-- Review Applications -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Applications to Review</h5>
+        <!-- Pending Registrations Panel -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Requests to Review</h5>
                 </div>
                 <div class="card-body">
-                    <p>3 new applications need your feedback.</p>
-                    <a asp-controller="Mentor" asp-action="ManageRegistrations" asp-route-id="0" class="btn btn-outline-info w-100">
-                        Review Now
-                    </a>
-                    @* Replace asp-route-id="0" with a real sessionId or list sessions *@
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Additional Panel -->
-    <div class="row mt-4">
-        <div class="col">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Mentor Resources</h5>
-                </div>
-                <div class="card-body">
-                    <ul>
-                        <li><a href="#">Mentorship Guidelines</a></li>
-                        <li><a href="#">How to Provide Feedback</a></li>
-                        <li><a href="#">Communication Tips</a></li>
-                    </ul>
+                    @if (!Model.PendingRegistrations.Any())
+                    {
+                        <p class="text-muted">No pending requests.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var r in Model.PendingRegistrations)
+                            {
+                                <li class="mb-3">
+                                    <strong>@r.MentorSession.Title</strong><br />
+                                    <small>@r.Student.Fullname (@r.RequestedOn:g)</small><br />
+                                    <form asp-action="UpdateRegistration" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="registrationId" value="@r.RegistrationID" />
+                                        <button name="status" value="Accepted" class="btn btn-sm btn-success me-1">
+                                            Accept
+                                        </button>
+                                        <button name="status" value="Denied" class="btn btn-sm btn-danger">
+                                            Deny
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </div>
             </div>
         </div>

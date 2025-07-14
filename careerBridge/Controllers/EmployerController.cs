@@ -208,5 +208,36 @@ namespace careerBridge.Controllers
 
             return View(model);
         }
+
+        // ✅ NEW: GET /Employer/JobListings
+        [HttpGet]
+        public async Task<IActionResult> JobListings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var employer = await _context.Employers
+                .Include(e => e.JobListings)
+                .FirstOrDefaultAsync(e => e.UserID == user.Id);
+
+            if (employer == null) return NotFound();
+
+            var jobs = employer.JobListings.Select(j => new JobViewModel
+            {
+                Id = j.JobListingID,
+                Title = j.Title,
+                PostedOn = j.PostedOn,
+                ApplicantCount = j.Applications?.Count ?? 0,
+                IsOpen = j.IsOpen
+            }).ToList();
+
+
+            var model = new EmployerDashboardViewModel
+            {
+                Jobs = jobs
+            };
+
+            return View(model);
+        }
     }
 }
