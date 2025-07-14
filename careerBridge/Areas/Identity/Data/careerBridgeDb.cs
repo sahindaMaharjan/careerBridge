@@ -11,7 +11,8 @@ namespace careerBridge.Areas.Identity.Data
             : base(options)
         {
         }
-
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Reply> Replies { get; set; }
         public DbSet<StudentProfile> Students { get; set; }
         public DbSet<EmployerProfile> Employers { get; set; }
         public DbSet<MentorProfile> Mentors { get; set; }
@@ -47,6 +48,13 @@ namespace careerBridge.Areas.Identity.Data
                             .HasDefaultValue(false); // default false
                     }
                 );
+
+            // Disable cascade delete on Replies -> Posts
+            modelBuilder.Entity<Reply>()
+                .HasOne(r => r.Post)
+                .WithMany(p => p.Replies)
+                .HasForeignKey(r => r.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Auto-generate Student ID
             modelBuilder.Entity<StudentProfile>()
