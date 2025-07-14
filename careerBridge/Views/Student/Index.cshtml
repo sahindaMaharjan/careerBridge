@@ -1,18 +1,95 @@
 ﻿@model List<careerBridge.Models.ExternalJobViewModel>
+@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
+@inject SignInManager<careerBridgeUser> SignInManager
+
 @{
     ViewData["Title"] = "Student Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var username = currentUser?.Fullname ?? "Student";
 }
 
 <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
 
 <div class="container mt-5">
-    <h1 class="text-success">Welcome, Student</h1>
+    <h1 class="text-success">Welcome, @username!</h1>
 
     @if (TempData["Message"] != null)
     {
         <div class="alert alert-success">@TempData["Message"]</div>
     }
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        <div class="col">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">WORK</h5>
+                    <ul>
+                        <li>Work Reminders</li>
+                        <li>Applied Status</li>
+                        <li>Work to Apply</li>
+                        <li>Work Matches</li>
+                        <li><strong>Search All:</strong> Jobs, Internships, Volunteering</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">EVENTS</h5>
+                    <ul>
+                        <li>Event Reminders</li>
+                        <li>Upcoming Matches</li>
+                        <li><strong>Search All Events</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">MENTORS</h5>
+                    <ul>
+                        <li>Mentor Reminders</li>
+                        <li>Mentor Matches</li>
+                        <li><strong>Search All Mentors</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">REMINDERS</h5>
+                    <p>Add and track your important deadlines.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-secondary">NOTES</h5>
+                    <p>Keep your quick thoughts and tasks here.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-dark">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">CALENDAR</h5>
+                    <p>View your upcoming schedule and activities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h2>Search Jobs</h2>
     <form method="get" class="row g-3 mb-4">
