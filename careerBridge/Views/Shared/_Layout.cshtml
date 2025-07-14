@@ -42,19 +42,20 @@
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="EventList">Events</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="BookMentor">Mentors</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Community" asp-action="Index">Community</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="SelectUser">Chat</a></li>
                                 }
                                 else if (User.IsInRole("Employer"))
                                 {
                                     <li class="nav-item"><a class="nav-link" asp-controller="Employer" asp-action="Index">Dashboard</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="Employer" asp-action="PostJob">My Job Posts</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="Index">Chats</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Job" asp-action="Index">My Job Posts</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Event" asp-action="Index">My Events</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="SelectUser">Chat</a></li>
                                 }
                                 else if (User.IsInRole("Mentor"))
                                 {
                                     <li class="nav-item"><a class="nav-link" asp-controller="Mentor" asp-action="Index">Dashboard</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="MentorSessions" asp-action="Index">Sessions</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="Index">Chats</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="SelectUser">Chat</a></li>
                                 }
                                 else if (User.IsInRole("Admin"))
                                 {

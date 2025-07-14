@@ -1,0 +1,41 @@
+﻿@model List<careerBridge.Areas.Identity.Data.careerBridgeUser>
+
+@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    string role = currentUser.RoleType;
+    var allowedUsers = new List<careerBridgeUser>();
+
+    if (role == "Student")
+    {
+        allowedUsers = Model.Where(u => u.RoleType == "Mentor" || u.RoleType == "Employer").ToList();
+    }
+    else if (role == "Mentor" || role == "Employer")
+    {
+        allowedUsers = Model.Where(u => u.RoleType == "Student").ToList();
+    }
+}
+
+<h3 class="mt-3">Select User to Chat With</h3>
+
+@if (!allowedUsers.Any())
+{
+    <p>No users available for chat.</p>
+}
+else
+{
+    <div class="list-group mt-3">
+        @foreach (var user in allowedUsers)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>@user.Fullname</strong> <small class="text-muted">(@user.RoleType)</small>
+                </span>
+                <a class="btn btn-sm btn-primary" asp-controller="Chat" asp-action="Index" asp-route-userId="@user.Id">Chat</a>
+            </div>
+        }
+    </div>
+}

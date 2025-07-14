@@ -1,0 +1,26 @@
+﻿@model List<careerBridge.Models.Message>
+@{
+    ViewData["Title"] = "Chat";
+    var currentUserId = ViewBag.CurrentUserId as string;
+    var chatUserId = ViewBag.ChatUserId as string;
+    var otherUser = ViewBag.OtherUser;
+}
+
+<h2>Chat with @otherUser</h2>
+<div class="border p-3 mb-3" style="height: 300px; overflow-y: auto;">
+    @foreach (var msg in Model)
+    {
+        <div class="mb-2 @(msg.SenderId == currentUserId ? "text-end" : "text-start")">
+            <span class="badge bg-secondary">@msg.Content</span><br />
+            <small class="text-muted">@msg.SentOn.ToString("hh:mm tt")</small>
+        </div>
+    }
+</div>
+
+<form asp-action="SendMessage" method="post">
+    <input type="hidden" name="receiverId" value="@chatUserId" />
+    <div class="input-group">
+        <input name="content" class="form-control" required placeholder="Type message..." />
+        <button type="submit" class="btn btn-primary">Send</button>
+    </div>
+</form>

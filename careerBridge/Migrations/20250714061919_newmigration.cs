@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace careerBridge.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:careerBridge/Migrations/20250714061919_newmigration.cs
     public partial class newmigration : Migration
+========
+    public partial class RemoveSenderEmployerIDFromMessages : Migration
+>>>>>>>> 93444514d44dbf1a3958556141ceae0b08b44382:careerBridge/Migrations/20250714075906_RemoveSenderEmployerIDFromMessages.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -368,52 +372,60 @@ namespace careerBridge.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SentOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SenderStudentID = table.Column<int>(type: "int", nullable: true),
-                    ReceiverStudentID = table.Column<int>(type: "int", nullable: true),
-                    SenderMentorID = table.Column<int>(type: "int", nullable: true),
-                    ReceiverMentorID = table.Column<int>(type: "int", nullable: true),
-                    SenderEmployerID = table.Column<int>(type: "int", nullable: true),
-                    ReceiverEmployerID = table.Column<int>(type: "int", nullable: true)
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployerProfileEmployerID = table.Column<int>(type: "int", nullable: true),
+                    EmployerProfileEmployerID1 = table.Column<int>(type: "int", nullable: true),
+                    MentorProfileMentorID = table.Column<int>(type: "int", nullable: true),
+                    MentorProfileMentorID1 = table.Column<int>(type: "int", nullable: true),
+                    StudentProfileStudentID = table.Column<int>(type: "int", nullable: true),
+                    StudentProfileStudentID1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.MessageID);
                     table.ForeignKey(
-                        name: "FK_Messages_Employers_ReceiverEmployerID",
-                        column: x => x.ReceiverEmployerID,
+                        name: "FK_Messages_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_Employers_EmployerProfileEmployerID",
+                        column: x => x.EmployerProfileEmployerID,
                         principalTable: "Employers",
-                        principalColumn: "EmployerID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "EmployerID");
                     table.ForeignKey(
-                        name: "FK_Messages_Employers_SenderEmployerID",
-                        column: x => x.SenderEmployerID,
+                        name: "FK_Messages_Employers_EmployerProfileEmployerID1",
+                        column: x => x.EmployerProfileEmployerID1,
                         principalTable: "Employers",
-                        principalColumn: "EmployerID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "EmployerID");
                     table.ForeignKey(
-                        name: "FK_Messages_Mentors_ReceiverMentorID",
-                        column: x => x.ReceiverMentorID,
+                        name: "FK_Messages_Mentors_MentorProfileMentorID",
+                        column: x => x.MentorProfileMentorID,
                         principalTable: "Mentors",
-                        principalColumn: "MentorID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "MentorID");
                     table.ForeignKey(
-                        name: "FK_Messages_Mentors_SenderMentorID",
-                        column: x => x.SenderMentorID,
+                        name: "FK_Messages_Mentors_MentorProfileMentorID1",
+                        column: x => x.MentorProfileMentorID1,
                         principalTable: "Mentors",
-                        principalColumn: "MentorID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "MentorID");
                     table.ForeignKey(
-                        name: "FK_Messages_Students_ReceiverStudentID",
-                        column: x => x.ReceiverStudentID,
+                        name: "FK_Messages_Students_StudentProfileStudentID",
+                        column: x => x.StudentProfileStudentID,
                         principalTable: "Students",
-                        principalColumn: "StudentID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "StudentID");
                     table.ForeignKey(
-                        name: "FK_Messages_Students_SenderStudentID",
-                        column: x => x.SenderStudentID,
+                        name: "FK_Messages_Students_StudentProfileStudentID1",
+                        column: x => x.StudentProfileStudentID1,
                         principalTable: "Students",
-                        principalColumn: "StudentID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "StudentID");
                 });
 
             migrationBuilder.CreateTable(
@@ -563,34 +575,44 @@ namespace careerBridge.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ReceiverEmployerID",
+                name: "IX_Messages_EmployerProfileEmployerID",
                 table: "Messages",
-                column: "ReceiverEmployerID");
+                column: "EmployerProfileEmployerID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ReceiverMentorID",
+                name: "IX_Messages_EmployerProfileEmployerID1",
                 table: "Messages",
-                column: "ReceiverMentorID");
+                column: "EmployerProfileEmployerID1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ReceiverStudentID",
+                name: "IX_Messages_MentorProfileMentorID",
                 table: "Messages",
-                column: "ReceiverStudentID");
+                column: "MentorProfileMentorID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderEmployerID",
+                name: "IX_Messages_MentorProfileMentorID1",
                 table: "Messages",
-                column: "SenderEmployerID");
+                column: "MentorProfileMentorID1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderMentorID",
+                name: "IX_Messages_ReceiverId",
                 table: "Messages",
-                column: "SenderMentorID");
+                column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderStudentID",
+                name: "IX_Messages_SenderId",
                 table: "Messages",
-                column: "SenderStudentID");
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_StudentProfileStudentID",
+                table: "Messages",
+                column: "StudentProfileStudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_StudentProfileStudentID1",
+                table: "Messages",
+                column: "StudentProfileStudentID1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",

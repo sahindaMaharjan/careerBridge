@@ -537,40 +537,52 @@ namespace careerBridge.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ReceiverEmployerID")
+                    b.Property<int?>("EmployerProfileEmployerID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReceiverMentorID")
+                    b.Property<int?>("EmployerProfileEmployerID1")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReceiverStudentID")
+                    b.Property<int?>("MentorProfileMentorID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SenderEmployerID")
+                    b.Property<int?>("MentorProfileMentorID1")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SenderMentorID")
-                        .HasColumnType("int");
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("SenderStudentID")
-                        .HasColumnType("int");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SentOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("StudentProfileStudentID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StudentProfileStudentID1")
+                        .HasColumnType("int");
+
                     b.HasKey("MessageID");
 
-                    b.HasIndex("ReceiverEmployerID");
+                    b.HasIndex("EmployerProfileEmployerID");
 
-                    b.HasIndex("ReceiverMentorID");
+                    b.HasIndex("EmployerProfileEmployerID1");
 
-                    b.HasIndex("ReceiverStudentID");
+                    b.HasIndex("MentorProfileMentorID");
 
-                    b.HasIndex("SenderEmployerID");
+                    b.HasIndex("MentorProfileMentorID1");
 
-                    b.HasIndex("SenderMentorID");
+                    b.HasIndex("ReceiverId");
 
-                    b.HasIndex("SenderStudentID");
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("StudentProfileStudentID");
+
+                    b.HasIndex("StudentProfileStudentID1");
 
                     b.ToTable("Messages");
                 });
@@ -796,47 +808,45 @@ namespace careerBridge.Migrations
 
             modelBuilder.Entity("careerBridge.Models.Message", b =>
                 {
-                    b.HasOne("careerBridge.Models.EmployerProfile", "ReceiverEmployer")
+                    b.HasOne("careerBridge.Models.EmployerProfile", null)
                         .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverEmployerID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("EmployerProfileEmployerID");
 
-                    b.HasOne("careerBridge.Models.MentorProfile", "ReceiverMentor")
+                    b.HasOne("careerBridge.Models.EmployerProfile", null)
+                        .WithMany("SentMessages")
+                        .HasForeignKey("EmployerProfileEmployerID1");
+
+                    b.HasOne("careerBridge.Models.MentorProfile", null)
                         .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverMentorID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("MentorProfileMentorID");
 
-                    b.HasOne("careerBridge.Models.StudentProfile", "ReceiverStudent")
+                    b.HasOne("careerBridge.Models.MentorProfile", null)
+                        .WithMany("SentMessages")
+                        .HasForeignKey("MentorProfileMentorID1");
+
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("careerBridge.Models.StudentProfile", null)
                         .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverStudentID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("StudentProfileStudentID");
 
-                    b.HasOne("careerBridge.Models.EmployerProfile", "SenderEmployer")
+                    b.HasOne("careerBridge.Models.StudentProfile", null)
                         .WithMany("SentMessages")
-                        .HasForeignKey("SenderEmployerID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("StudentProfileStudentID1");
 
-                    b.HasOne("careerBridge.Models.MentorProfile", "SenderMentor")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderMentorID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.Navigation("Receiver");
 
-                    b.HasOne("careerBridge.Models.StudentProfile", "SenderStudent")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderStudentID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ReceiverEmployer");
-
-                    b.Navigation("ReceiverMentor");
-
-                    b.Navigation("ReceiverStudent");
-
-                    b.Navigation("SenderEmployer");
-
-                    b.Navigation("SenderMentor");
-
-                    b.Navigation("SenderStudent");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("careerBridge.Models.StudentProfile", b =>
