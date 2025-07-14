@@ -1,10 +1,12 @@
 ﻿@model IEnumerable<careerBridge.Models.JobListing>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Available Jobs";
+    ViewData["Title"] = "Available Job Listings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4">Available Job Listings</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 
 @if (!Model.Any())
 {
@@ -21,13 +23,26 @@ else
                         <h5 class="card-title">@job.Title</h5>
                         <p class="card-text">@job.Description</p>
                         <p class="card-text">
-                            <small class="text-muted">Employer: @job.Employer</small><br />
-                            <small class="text-muted">Posted on: @job.PostedOn.ToShortDateString()</small>
+                            <small class="text-muted">Employer: @job.Employer.CompanyName</small><br />
+                            <small class="text-muted">Posted on: @job.PostedOn:MMM d, yyyy</small><br />
+                            <small class="text-muted">
+                                Salary: @(job.Salary.HasValue? job.Salary.Value.ToString("C0") : "—")
+                            </small>
                         </p>
-                        <a asp-action="Apply" asp-route-id="@job.JobListingID" class="btn btn-primary">Apply Now</a>
+                        <form asp-controller="Student" asp-action="Apply" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="jobTitle" value="@job.Title" />
+                            <input type="hidden" name="company" value="@job.Employer.CompanyName" />
+                            <button type="submit" class="btn btn-primary">Apply Now</button>
+                        </form>
                     </div>
                 </div>
             </div>
         }
     </div>
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success mt-4">@TempData["Message"]</div>
 }

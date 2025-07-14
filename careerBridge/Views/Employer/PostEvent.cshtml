@@ -1,7 +1,8 @@
-﻿@model careerBridge.Models.Event
+@model careerBridge.Models.CreateEventViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewBag.Title = "Post an Event";
+    ViewData["Title"] = "Post a New Event";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -15,48 +16,35 @@
                     <h4 class="mb-0">Post a New Event</h4>
                 </div>
                 <div class="card-body">
-                    @using (Html.BeginForm("PostEvent", "Employer", FormMethod.Post))
-                    {
+                    <form asp-controller="Employer" asp-action="CreateEvent" method="post">
                         @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.Title, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter event title" })
-                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter event title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.Description, new { @class = "form-label" })
-                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5, placeholder = "Enter event description" })
-                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter event description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.Location, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter event location" })
-                            @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.EventDate, new { @class = "form-label" })
-                            @Html.TextBoxFor(m => m.EventDate, new { @class = "form-control", type = "datetime-local" })
-                            @Html.ValidationMessageFor(m => m.EventDate, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="form-check form-switch mb-3">
-                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
-                            @Html.LabelFor(m => m.IsActive, new { @class = "form-check-label" })
+                        <div class="mb-3">
+                            <label asp-for="EventDate" class="form-label"></label>
+                            <input asp-for="EventDate" type="date" class="form-control" />
+                            <span asp-validation-for="EventDate" class="text-danger"></span>
                         </div>
 
                         <div class="text-end">
                             <button type="submit" class="btn btn-success">
-                                <i class="bi bi-calendar-plus"></i> Post Event
+                                <i class="bi bi-calendar-plus me-1"></i> Post Event
                             </button>
-                            <a asp-action="Index" asp-controller="Employer" class="btn btn-secondary ms-2">Cancel</a>
+                            <a asp-controller="Employer" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
                         </div>
-                    }
+                    </form>
                 </div>
             </div>
         </div>

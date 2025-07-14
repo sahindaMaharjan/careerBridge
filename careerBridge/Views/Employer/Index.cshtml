@@ -22,16 +22,12 @@
 
     .card {
         border-radius: 20px;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        background: #fff;
     }
 
     .card-body {
         padding: 2rem 1.5rem;
-    }
-
-    .card h5 {
-        font-weight: 600;
     }
 
     .display-6 {
@@ -43,7 +39,7 @@
     .btn {
         border-radius: 30px;
         font-weight: 600;
-        padding: 0.6rem 1.4rem;
+        padding: .6rem 1.4rem;
     }
 
     .btn-primary {
@@ -59,28 +55,23 @@
     .btn-warning {
         background-color: #ff9900;
         border: none;
-    }
-
-    h3 {
-        color: #1a1a1a;
-        margin-top: 2rem;
-        font-weight: 600;
+        color: #fff;
     }
 
     .badge {
-        font-size: 0.85rem;
-        padding: 0.4rem 0.8rem;
+        font-size: .85rem;
+        padding: .4rem .8rem;
         border-radius: 1rem;
     }
 
     .list-group-item {
         border: none;
-        background-color: #fff;
+        background: #fff;
         border-bottom: 1px solid #e9ecef;
     }
 
     .table th {
-        background-color: #f1f5f9;
+        background: #f1f5f9;
         color: #333;
     }
 
@@ -95,27 +86,27 @@
     <!-- Stats Cards -->
     <div class="row mb-4 text-white">
         <div class="col-md-4">
-            <div class="card text-center">
+            <div class="card text-center bg-info">
                 <div class="card-body">
-                    <i class="bi bi-briefcase-fill fs-2 text-primary"></i>
+                    <i class="bi bi-briefcase-fill fs-2"></i>
                     <h5 class="card-title mt-2">Jobs Posted</h5>
                     <p class="display-6">@Model.JobCount</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center">
+            <div class="card text-center bg-secondary">
                 <div class="card-body">
-                    <i class="bi bi-chat-left-dots-fill fs-2 text-secondary"></i>
+                    <i class="bi bi-chat-left-dots-fill fs-2"></i>
                     <h5 class="card-title mt-2">Chats</h5>
                     <p class="display-6">@Model.ChatCount</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center">
+            <div class="card text-center bg-warning">
                 <div class="card-body">
-                    <i class="bi bi-calendar-event-fill fs-2 text-warning"></i>
+                    <i class="bi bi-calendar-event-fill fs-2"></i>
                     <h5 class="card-title mt-2">Events Posted</h5>
                     <p class="display-6">@Model.EventCount</p>
                 </div>
@@ -132,7 +123,7 @@
             <a asp-controller="Chat" asp-action="Index" class="btn btn-outline-secondary me-2">
                 <i class="bi bi-chat-dots me-1"></i> Chat with Students
             </a>
-            <a asp-controller="Employer" asp-action="PostEvent" class="btn btn-warning text-white">
+            <a asp-controller="Employer" asp-action="CreateEvent" class="btn btn-warning">
                 <i class="bi bi-calendar-plus me-1"></i> Post Event
             </a>
         </div>
@@ -144,7 +135,13 @@
             <h3>Your Job Listings</h3>
             <table class="table table-hover mt-3">
                 <thead>
-                    <tr><th>Title</th><th>Posted On</th><th>Applicants</th><th>Status</th><th></th></tr>
+                    <tr>
+                        <th>Title</th>
+                        <th>Posted On</th>
+                        <th>Applicants</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                     @foreach (var job in Model.Jobs)
@@ -159,10 +156,10 @@
                                 </span>
                             </td>
                             <td>
-                                <a asp-action="Details" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a asp-controller="Job" asp-action="Details" asp-route-id="@job.Id" class="btn btn-sm btn-outline-secondary">View</a>
                                 @if (job.IsOpen)
                                 {
-                                    <a asp-action="Edit" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-sm btn-outline-success ms-1">Edit</a>
+                                    <a asp-controller="Job" asp-action="Edit" asp-route-id="@job.Id" class="btn btn-sm btn-outline-success ms-1">Edit</a>
                                 }
                             </td>
                         </tr>
@@ -178,7 +175,12 @@
             <h3>Your Events</h3>
             <table class="table table-hover mt-3">
                 <thead>
-                    <tr><th>Event</th><th>Date</th><th>Registrations</th><th></th></tr>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Registrations</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                     @foreach (var ev in Model.Events)
@@ -188,7 +190,7 @@
                             <td>@ev.Date:MMM d, yyyy</td>
                             <td>@ev.RegistrationCount</td>
                             <td>
-                                <a asp-action="Details" asp-controller="Event" asp-route-id="@ev.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a asp-controller="Employer" asp-action="EventDetails" asp-route-id="@ev.Id" class="btn btn-sm btn-outline-secondary">View</a>
                             </td>
                         </tr>
                     }
@@ -210,7 +212,9 @@
                             <p class="mb-1">“@chat.LastMessageSnippet”</p>
                             <small class="text-muted">@chat.LastMessageTime:g</small>
                         </div>
-                        <a asp-action="Conversation" asp-controller="Chat" asp-route-withUser="@chat.StudentId" class="btn btn-sm btn-outline-primary">Continue →</a>
+                        <a asp-controller="Chat" asp-action="Conversation" asp-route-withUser="@chat.StudentId" class="btn btn-sm btn-outline-primary">
+                            Continue →
+                        </a>
                     </div>
                 }
             </div>

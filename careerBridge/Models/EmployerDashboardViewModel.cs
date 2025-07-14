@@ -31,11 +31,5 @@ namespace careerBridge.Models
         public int RegistrationCount { get; set; }
     }
 
-    public class ChatSummary
-    {
-        public int StudentId { get; set; }
-        public string StudentName { get; set; } = string.Empty;
-        public string LastMessageSnippet { get; set; } = string.Empty;
-        public DateTime LastMessageTime { get; set; }
-    }
+   
 }
