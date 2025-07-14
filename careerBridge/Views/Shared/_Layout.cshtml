@@ -1,6 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
 @inject SignInManager<careerBridgeUser> SignInManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var fullName = currentUser?.Fullname ?? "User";
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - careerBridge</title>
 
-    <!-- Bootswatch Flatly Theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/careerBridge.styles.css" asp-append-version="true" />
@@ -19,11 +24,10 @@
     <header>
         @if (ViewData["HideNavbar"] == null || !(bool)ViewData["HideNavbar"])
         {
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
                 <div class="container-fluid">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">CareerBridge</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
-                            aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                    <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">CareerBridge</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
@@ -38,7 +42,6 @@
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="EventList">Events</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="BookMentor">Mentors</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Community" asp-action="Index">Community</a></li>
-
                                 }
                                 else if (User.IsInRole("Employer"))
                                 {
@@ -65,19 +68,19 @@
                             }
                         </ul>
 
-                        <ul class="navbar-nav ms-auto">
-                            @if (SignInManager.IsSignedIn(User))
-                            {
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <ul class="navbar-nav ms-auto">
                                 <li class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">
-                                        <img src="~/img/wlp.jpg" alt="Profile" width="40" height="40" class="rounded-circle me-2" />
-                                        <span class="text-white">@User.Identity?.Name</span>
+                                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                                        <img src="~/img/wlp.jpg" alt="Profile" width="36" height="36" class="rounded-circle me-2 border" />
+                                        <span class="text-white fw-semibold">@fullName</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header">Hello, @User.Identity?.Name</h6></li>
-                                        <a href="~/Identity/Account/Manage/EnableAuthenticator" class="btn btn-primary">
-                                            Enable Authenticator (Two-Factor Authentication)
-                                        </a>                                     
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                        <li><h6 class="dropdown-header">Hello, @fullName</h6></li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li><a class="dropdown-item" href="~/Identity/Account/Manage/EnableAuthenticator">Enable 2FA</a></li>
+                                        <li><a class="dropdown-item" href="~/Identity/Account/Manage/Disable2fa">Disable 2FA</a></li>
                                         <li><a class="dropdown-item" href="#">Settings</a></li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>
@@ -87,8 +90,8 @@
                                         </li>
                                     </ul>
                                 </li>
-                            }
-                        </ul>
+                            </ul>
+                        }
                     </div>
                 </div>
             </nav>
@@ -99,7 +102,7 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-light text-center text-muted py-3 border-top">
+    <footer class="bg-light text-center text-muted py-3 border-top mt-auto">
         <div class="container">
             &copy; @DateTime.Now.Year - careerBridge |
             <a asp-controller="Home" asp-action="Privacy">Privacy</a>
