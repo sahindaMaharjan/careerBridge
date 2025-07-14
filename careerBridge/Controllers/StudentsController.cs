@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace careerBridge.Controllers
 {
@@ -16,13 +19,59 @@ namespace careerBridge.Controllers
         private readonly JobSearchService _jobSearchService;
         private readonly UserManager<careerBridgeUser> _userManager;
         private readonly careerBridgeDb _context;
+        private readonly string _eventbriteToken;
 
-        public StudentController(careerBridgeDb context, UserManager<careerBridgeUser> userManager, JobSearchService jobSearchService)
+        public StudentController(careerBridgeDb context, UserManager<careerBridgeUser> userManager, JobSearchService jobSearchService, IConfiguration config)
         {
             _context = context;
             _userManager = userManager;
             _jobSearchService = jobSearchService;
+            _eventbriteToken = config["Eventbrite:Token"];
         }
+
+        // EVENT LIST USING EVENTBRITE API
+        [HttpGet]
+        public async Task<IActionResult> EventList(string keyword, string location, string startDate, string endDate)
+        {
+            using var client = new HttpClient();
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _eventbriteToken);
+
+            // Build query parameters for Eventbrite API
+            var queryParams = new List<string>();
+
+            if (!string.IsNullOrEmpty(keyword))
+                queryParams.Add($"q={Uri.EscapeDataString(keyword)}");
+
+            if (!string.IsNullOrEmpty(location))
+                queryParams.Add($"location.address={Uri.EscapeDataString(location)}");
+
+            if (!string.IsNullOrEmpty(startDate))
+                queryParams.Add($"start_date.range_start={Uri.EscapeDataString(startDate)}");
+
+            if (!string.IsNullOrEmpty(endDate))
+                queryParams.Add($"start_date.range_end={Uri.EscapeDataString(endDate)}");
+
+            var url = "https://www.eventbriteapi.com/v3/events/search/";
+
+            if (queryParams.Count > 0)
+                url += "?" + string.Join("&", queryParams);
+
+            var response = await client.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["Error"] = $"Error fetching events: {response.StatusCode}";
+                return View(new List<EventItem>());
+            }
+
+            // Deserialize into typed classes
+            var result = JsonConvert.DeserializeObject<eventbriteResponse>(json);
+
+            return View(result?.events ?? new List<EventItem>());
+        }
+
 
         // JOB LIST FROM EXTERNAL API
         public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
@@ -58,22 +107,19 @@ namespace careerBridge.Controllers
         [HttpGet]
         public async Task<IActionResult> BookMentor()
         {
-            var userId = _userManager.GetUserId(User); // logged-in Identity user Id (string)
+            var userId = _userManager.GetUserId(User);
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // Get StudentProfile by UserID (int StudentID)
             var student = await _context.Students
-                .Include(s => s.RequestedMentors)  // Include mentors already requested
+                .Include(s => s.RequestedMentors)
                 .FirstOrDefaultAsync(s => s.UserID == userId);
 
             if (student == null)
-                return Unauthorized(); // Or redirect to profile creation page
+                return Unauthorized();
 
-            // Get all mentors
             var mentors = await _context.Mentors.ToListAsync();
 
-            // Build view model to mark which mentors were already requested
             var model = mentors.Select(m => new BookMentorViewModel
             {
                 MentorID = m.MentorID,
@@ -93,7 +139,6 @@ namespace careerBridge.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            // Load student with requested mentors
             var student = await _context.Students
                 .Include(s => s.RequestedMentors)
                 .FirstOrDefaultAsync(s => s.UserID == userId);
@@ -105,7 +150,6 @@ namespace careerBridge.Controllers
             if (mentor == null)
                 return NotFound("Mentor not found.");
 
-            // Add mentor to student's requested mentors if not already added
             if (!student.RequestedMentors.Any(rm => rm.MentorID == mentorId))
             {
                 student.RequestedMentors.Add(mentor);
@@ -114,7 +158,8 @@ namespace careerBridge.Controllers
 
             return RedirectToAction(nameof(BookMentor));
         }
-        public async Task<IActionResult> MentorDetails(int id) // id = MentorID
+
+        public async Task<IActionResult> MentorDetails(int id)
         {
             var mentor = await _context.Mentors
                 .FirstOrDefaultAsync(m => m.MentorID == id);

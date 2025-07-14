@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using careerBridge.Areas.Identity.Data;
 using careerBridge.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using careerBridge.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration
     .GetConnectionString("careerBridgeDbConnection")
     ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
+
 
 builder.Services.AddScoped<JobSearchService>();
 
