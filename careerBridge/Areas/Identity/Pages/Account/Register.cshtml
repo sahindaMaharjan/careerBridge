@@ -1,115 +1,214 @@
 ﻿@page
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+<style>
+    body {
+        background: url('/img/background.png') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <section class="col-md-6">
-            <div class="card shadow-sm">
-                <header class="card-header bg-primary text-white text-center">
-                    <h3 class="mb-0">@ViewData["Title"]</h3>
-                </header>
-                <div class="card-body">
-                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
-                        <div class="mb-4 text-center">
-                            <span class="badge bg-secondary" id="stepIndicator">Step 1 of 2</span> <!-- Added id="stepIndicator" for JS update -->
-                        </div>
+    .register-container {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+    }
 
-                        <div id="step1">
-                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    .register-box {
+        display: flex;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 1000px;
+        max-width: 100%;
+    }
 
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.Fullname" class="form-control" placeholder="Fullname" />
-                                <label asp-for="Input.Fullname">Full Name</label>
-                                <span asp-validation-for="Input.Fullname" class="text-danger"></span>
-                            </div>
+    .register-image {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
 
-                            <div class="mb-3">
-                                <label asp-for="Input.Role" class="form-label">Role</label>
-                                <select asp-for="Input.Role" class="form-select" id="roleSelect">
-                                    <option value="" selected>-- choose one --</option>
-                                    <option value="Student">Student</option>
-                                    <option value="Employer">Employer</option>
-                                    <option value="Mentor">Mentor</option>
-                                </select>
-                                <span asp-validation-for="Input.Role" class="text-danger"></span>
-                            </div>
+        .register-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.Phone" class="form-control" placeholder="Phone" />
-                                <label asp-for="Input.Phone">Phone</label>
-                                <span asp-validation-for="Input.Phone" class="text-danger"></span>
-                            </div>
+    .register-form {
+        flex: 1;
+        background: #007bff;
+        color: white;
+        padding: 3rem 2rem;
+    }
 
-                            <!-- Student -->
-                            <div class="form-floating mb-3 d-none" id="collegeField">
-                                <input asp-for="Input.CollegeName" class="form-control" placeholder="College Name" />
-                                <label asp-for="Input.CollegeName">College Name</label>
-                                <span asp-validation-for="Input.CollegeName" class="text-danger"></span>
-                            </div>
+        .register-form h2 {
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
 
-                            <!-- Employer -->
-                            <div class="form-floating mb-3 d-none" id="businessCer">
-                                <input asp-for="Input.BusinessCertificate" class="form-control" placeholder="Business Certificate" />
-                                <label asp-for="Input.BusinessCertificate">Business Certificate</label>
-                                <span asp-validation-for="Input.BusinessCertificate" class="text-danger"></span>
-                            </div>
+    .form-group, .form-floating {
+        margin-bottom: 1.25rem;
+    }
 
-                            <!-- Mentor -->
-                            <div class="form-floating mb-3 d-none" id="experienceCer">
-                                <input asp-for="Input.ExperienceCertificate" class="form-control" placeholder="Experience Certificate" />
-                                <label asp-for="Input.ExperienceCertificate">Experience Certificate</label>
-                                <span asp-validation-for="Input.ExperienceCertificate" class="text-danger"></span>
-                            </div>
+    .form-control {
+        border-radius: 30px;
+        padding: 0.75rem 1.25rem;
+    }
 
-                            <div class="form-floating mb-3 d-none" id="expertiseField">
-                                <input asp-for="Input.ExpertiseArea" class="form-control" placeholder="Expertise Area" />
-                                <label asp-for="Input.ExpertiseArea">Expertise</label>
-                                <span asp-validation-for="Input.ExpertiseArea" class="text-danger"></span>
-                            </div>
+    .btn-next,
+    .btn-submit {
+        border-radius: 30px;
+        padding: 0.6rem 1.25rem;
+        width: 100%;
+        font-weight: 600;
+    }
 
-                            <button type="button" class="btn btn-info px-4 text-white w-100" onclick="goToStep2()">Next</button>
-                        </div>
+    .btn-next {
+        background-color: #ffc107;
+        color: #000;
+        border: none;
+    }
 
-                        <div id="step2" style="display: none;">
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.Email" class="form-control" placeholder="Email" />
-                                <label asp-for="Input.Email">Email</label>
-                                <span asp-validation-for="Input.Email" class="text-danger"></span>
-                            </div>
+    .btn-submit {
+        background-color: #28a745;
+        border: none;
+        color: #fff;
+    }
 
-                            <div class="form-floating mb-3">
-                                <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" />
-                                <label asp-for="Input.Password">Password</label>
-                                <span asp-validation-for="Input.Password" class="text-danger"></span>
-                            </div>
+    .btn-outline {
+        background-color: transparent;
+        border: 2px solid white;
+        color: white;
+    }
 
-                            <div class="form-floating mb-4">
-                                <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
-                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                            </div>
+    .alert-danger {
+        background-color: rgba(255, 0, 0, 0.1);
+        color: white;
+    }
 
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-outline-info px-4" onclick="backToStep1()">Back</button>
-                                <button type="submit" class="btn btn-success px-4 text-white">Register</button>
-                            </div>
-                        </div>
-                    </form>
+    label, .form-check-label {
+        font-size: 0.9rem;
+        color: #d1e9ff;
+    }
+
+    .badge.bg-secondary {
+        background-color: #6c757d !important;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-box">
+        <!-- Illustration -->
+        <div class="register-image">
+            <img src="/img/login-illustration.png" alt="Register Illustration" />
+        </div>
+
+        <!-- Form Panel -->
+        <div class="register-form">
+            <h2>Create Account</h2>
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+                <div class="mb-4 text-center">
+                    <span class="badge bg-secondary" id="stepIndicator">Step 1 of 2</span>
                 </div>
-            </div>
-        </section>
+
+                <!-- Step 1 -->
+                <div id="step1">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="form-floating">
+                        <input asp-for="Input.Fullname" class="form-control" placeholder="Full Name" />
+                        <label asp-for="Input.Fullname">Full Name</label>
+                        <span asp-validation-for="Input.Fullname" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.Role">Role</label>
+                        <select asp-for="Input.Role" class="form-control" id="roleSelect">
+                            <option value="" selected>-- choose one --</option>
+                            <option value="Student">Student</option>
+                            <option value="Employer">Employer</option>
+                            <option value="Mentor">Mentor</option>
+                        </select>
+                        <span asp-validation-for="Input.Role" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating">
+                        <input asp-for="Input.Phone" class="form-control" placeholder="Phone" />
+                        <label asp-for="Input.Phone">Phone</label>
+                        <span asp-validation-for="Input.Phone" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating d-none" id="collegeField">
+                        <input asp-for="Input.CollegeName" class="form-control" placeholder="College Name" />
+                        <label asp-for="Input.CollegeName">College Name</label>
+                        <span asp-validation-for="Input.CollegeName" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating d-none" id="businessCer">
+                        <input asp-for="Input.BusinessCertificate" class="form-control" placeholder="Business Certificate" />
+                        <label asp-for="Input.BusinessCertificate">Business Certificate</label>
+                        <span asp-validation-for="Input.BusinessCertificate" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating d-none" id="experienceCer">
+                        <input asp-for="Input.ExperienceCertificate" class="form-control" placeholder="Experience Certificate" />
+                        <label asp-for="Input.ExperienceCertificate">Experience Certificate</label>
+                        <span asp-validation-for="Input.ExperienceCertificate" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating d-none" id="expertiseField">
+                        <input asp-for="Input.ExpertiseArea" class="form-control" placeholder="Expertise Area" />
+                        <label asp-for="Input.ExpertiseArea">Expertise</label>
+                        <span asp-validation-for="Input.ExpertiseArea" class="text-warning"></span>
+                    </div>
+
+                    <button type="button" class="btn btn-next" onclick="goToStep2()">Next</button>
+                </div>
+
+                <!-- Step 2 -->
+                <div id="step2" style="display: none;">
+                    <div class="form-floating">
+                        <input asp-for="Input.Email" class="form-control" placeholder="Email" />
+                        <label asp-for="Input.Email">Email</label>
+                        <span asp-validation-for="Input.Email" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating">
+                        <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" />
+                        <label asp-for="Input.Password">Password</label>
+                        <span asp-validation-for="Input.Password" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                        <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-warning"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline w-50" onclick="backToStep1()">Back</button>
+                        <button type="submit" class="btn btn-submit w-50">Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        //swikrit
         function goToStep2() {
             const role = document.getElementById("roleSelect").value;
             if (!role) {
@@ -119,29 +218,23 @@
 
             document.getElementById("step1").style.display = "none";
             document.getElementById("step2").style.display = "block";
-
             document.getElementById("stepIndicator").innerText = "Step 2 of 2";
-
         }
 
         function backToStep1() {
             document.getElementById("step1").style.display = "block";
             document.getElementById("step2").style.display = "none";
-
             document.getElementById("stepIndicator").innerText = "Step 1 of 2";
 
             const role = document.getElementById("roleSelect").value;
-            if(role) {
-                toggleRoleFields(role);
-            }
+            if (role) toggleRoleFields(role);
         }
 
-        //sahinda
         function toggleRoleFields(role) {
-            let studentField = document.getElementById("collegeField");
-            let employerField = document.getElementById("businessCer");
-            let mentorField = document.getElementById("experienceCer");
-            let mentorField2 = document.getElementById("expertiseField");
+            const studentField = document.getElementById("collegeField");
+            const employerField = document.getElementById("businessCer");
+            const mentorField = document.getElementById("experienceCer");
+            const mentorField2 = document.getElementById("expertiseField");
 
             studentField.classList.add("d-none");
             employerField.classList.add("d-none");
@@ -158,7 +251,7 @@
             }
         }
 
-        document.getElementById("roleSelect").addEventListener("change", function() {
+        document.getElementById("roleSelect").addEventListener("change", function () {
             toggleRoleFields(this.value);
         });
     </script>

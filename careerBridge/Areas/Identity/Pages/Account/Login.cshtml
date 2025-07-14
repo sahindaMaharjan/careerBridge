@@ -5,87 +5,139 @@
     ViewData["Title"] = "Log in";
 }
 
+<style>
+    body {
+        background: url('/img/background.png') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+    .login-container {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+    }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <!-- Local Account Login Card -->
-        <section class="col-md-5">
-            <div class="card shadow-sm">
-                <header class="card-header bg-primary text-white text-center">
-                    <h3 class="mb-0">@ViewData["Title"]</h3>
-                </header>
+    .login-box {
+        display: flex;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 900px;
+        max-width: 100%;
+    }
 
-                <div class="card-body">
-                    <form id="account" method="post" novalidate>
-                        <h5 class="text-center mb-4">Use a local account to log in</h5>
+    .login-image {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
 
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        .login-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email">Email</label>
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
+    .login-form {
+        flex: 1;
+        background: #007bff;
+        color: white;
+        padding: 3rem 2rem;
+    }
 
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" type="password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Password" />
-                            <label asp-for="Input.Password">Password</label>
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        </div>
+        .login-form h2 {
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
 
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" asp-for="Input.RememberMe" id="RememberMe" />
-                            <label class="form-check-label" for="RememberMe">
-                                @Html.DisplayNameFor(m => m.Input.RememberMe)
-                            </label>
-                        </div>
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
 
-                        <button id="login-submit" type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-                            Log in
-                        </button>
+    .form-control {
+        border-radius: 30px;
+        padding: 0.75rem 1.25rem;
+    }
 
-                        <div class="text-center">
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="d-block mb-2">Forgot your password?</a>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="d-block mb-2">Register as a new user</a>
-                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="d-block">Resend email confirmation</a>
-                        </div>
-                    </form>
+    .btn-login {
+        border-radius: 30px;
+        padding: 0.6rem 1.25rem;
+        width: 100%;
+        font-weight: 600;
+        background-color: #ff9900;
+        border: none;
+        color: #fff;
+    }
+
+    .form-links a {
+        display: block;
+        color: #d1e9ff;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        text-decoration: underline;
+    }
+
+    .input-label {
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
+
+    .form-check-label {
+        color: #d1e9ff;
+    }
+
+    .alert-danger {
+        background-color: rgba(255, 0, 0, 0.1);
+        color: white;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-image">
+            <img src="/img/login-illustration.png" alt="Login Illustration" />
+        </div>
+        <div class="login-form">
+            <h2>Welcome!</h2>
+
+            <form id="account" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="input-label">Email</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="you@example.com" />
+                    <span asp-validation-for="Input.Email" class="text-warning"></span>
                 </div>
-            </div>
-        </section>
 
-        <!-- External Logins Card -->
-        <section class="col-md-5 mt-4 mt-md-0">
-            <div class="card shadow-sm">
-                <header class="card-header bg-secondary text-white text-center">
-                    <h4 class="mb-0">Use another service</h4>
-                </header>
-
-                <div class="card-body text-center">
-                    @if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                    {
-                        <p>
-                            There are no external authentication services configured. See this
-                            <a href="https://go.microsoft.com/fwlink/?LinkID=532715" target="_blank" rel="noopener noreferrer">guide</a>.
-                        </p>
-                    }
-                    else
-                    {
-                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                            @foreach (var provider in Model.ExternalLogins!)
-                            {
-                                <button type="submit" class="btn btn-outline-primary w-100 mb-2" name="provider" value="@provider.Name"
-                                        title="Log in using your @provider.DisplayName account">
-                                    Log in with @provider.DisplayName
-                                </button>
-                            }
-                        </form>
-                    }
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="input-label">Password</label>
+                    <input asp-for="Input.Password" type="password" class="form-control" autocomplete="current-password" placeholder="••••••••" />
+                    <span asp-validation-for="Input.Password" class="text-warning"></span>
                 </div>
-            </div>
-        </section>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="Input.RememberMe" id="RememberMe" />
+                    <label class="form-check-label" for="RememberMe">
+                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    </label>
+                </div>
+
+                <button id="login-submit" type="submit" class="btn btn-login">Sign in</button>
+
+                <div class="form-links mt-3">
+                    <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create account</a>
+                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
