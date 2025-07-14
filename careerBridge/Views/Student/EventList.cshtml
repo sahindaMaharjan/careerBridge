@@ -1,1 +1,54 @@
-﻿
+﻿@model List<careerBridge.Models.EventItem>
+
+@{
+    ViewData["Title"] = "Events Near You";
+}
+
+<h2 class="mb-4 text-primary">Events Near You</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="get" asp-action="EventList" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <input type="text" name="keyword" class="form-control" placeholder="Keyword (e.g. tech, career)" />
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="location" class="form-control" placeholder="Location (e.g. Toronto)" />
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="startDate" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="endDate" class="form-control" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No events found. Try searching with a different keyword or location.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var ev in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@ev.name?.text</h5>
+                        <p class="card-text text-truncate">
+                            @ev.description?.text?.Substring(0, Math.Min(100, ev.description.text.Length))...
+                        </p>
+                        <a href="@ev.url" target="_blank" class="btn btn-outline-success">Register</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
