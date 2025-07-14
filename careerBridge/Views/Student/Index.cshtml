@@ -16,9 +16,12 @@
 <div class="container mt-5">
     <h1 class="text-success">Welcome, @username!</h1>
 
-    <p>
-        <a asp-controller="Student" asp-action="Events" class="btn btn-primary">
+    <p class="mb-4">
+        <a asp-controller="Student" asp-action="Events" class="btn btn-primary me-2">
             View Upcoming Events
+        </a>
+        <a asp-controller="Student" asp-action="JobList" class="btn btn-secondary">
+            View Employer-Posted Jobs
         </a>
     </p>
 
@@ -69,6 +72,7 @@
                     <p class="full-description d-none">@job.Description</p>
 
                     <form method="post" asp-action="Apply" asp-controller="Student">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="jobTitle" value="@job.Title" />
                         <input type="hidden" name="company" value="@job.CompanyName" />
                         <button type="submit" class="btn btn-sm btn-outline-success">Apply</button>

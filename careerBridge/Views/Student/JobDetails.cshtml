@@ -1,0 +1,36 @@
+﻿@model careerBridge.Models.JobListing
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+
+<div class="mb-3">
+    <strong>Company:</strong> @Model.Employer.CompanyName
+</div>
+<div class="mb-3">
+    <strong>Posted On:</strong> @Model.PostedOn:yyyy-MM-dd
+</div>
+<div class="mb-3">
+    <strong>Location:</strong> @Model.Location
+</div>
+
+<!-- Updated Salary block -->
+<div class="mb-3">
+    <strong>Salary:</strong>
+    @(
+        Model.Salary.HasValue
+        ? Model.Salary.Value.ToString("C0")
+        : "—"
+        )
+</div>
+
+<div class="mb-3">
+    <strong>Description:</strong>
+    <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided." : Model.Description)</p>
+</div>
+
+<a asp-action="JobList" class="btn btn-secondary">← Back to Job Listings</a>

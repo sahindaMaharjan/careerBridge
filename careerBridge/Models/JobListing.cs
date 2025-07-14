@@ -1,4 +1,7 @@
-﻿using System;
+﻿// File: Models/JobListing.cs
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +18,8 @@ namespace careerBridge.Models
 
         public string? Description { get; set; }
 
-        public decimal Salary { get; set; }
+        // Salary is optional
+        public decimal? Salary { get; set; }
 
         public string? Location { get; set; }
 
@@ -27,9 +31,9 @@ namespace careerBridge.Models
         public int EmployerID { get; set; }
 
         [ForeignKey("EmployerID")]
+        [ValidateNever]  // Skip MVC validation for navigation property
         public EmployerProfile Employer { get; set; } = null!;
 
-        // ✅ Add this navigation property
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
     }
 }

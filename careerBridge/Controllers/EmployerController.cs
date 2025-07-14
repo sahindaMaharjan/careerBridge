@@ -35,6 +35,7 @@ namespace careerBridge.Controllers
             if (employer == null)
                 return NotFound("Employer profile not found.");
 
+            // Load dashboard data
             var jobs = await _context.JobListings
                 .Where(j => j.EmployerID == employer.EmployerID)
                 .Include(j => j.Applications)
@@ -60,32 +61,35 @@ namespace careerBridge.Controllers
                 JobCount = jobs.Count,
                 EventCount = events.Count,
                 ChatCount = messages.Count,
+
                 Jobs = jobs.Select(j => new JobViewModel
                 {
                     Id = j.JobListingID,
                     Title = j.Title,
                     PostedOn = j.PostedOn,
-                    ApplicantCount = j.Applications?.Count ?? 0,
+                    ApplicantCount = j.Applications.Count,
                     IsOpen = j.IsOpen
                 }).ToList(),
+
                 Events = events.Select(e => new EventViewModel
                 {
                     Id = e.EventID,
                     Name = e.Title,
                     Date = e.EventDate,
-                    RegistrationCount = e.EventRegistrations?.Count() ?? 0
+                    RegistrationCount = e.EventRegistrations.Count
                 }).ToList(),
+
                 RecentChats = messages.Select(m => new ChatSummary
                 {
                     StudentId = m.SenderId == user.Id
-                                                        ? m.ReceiverId
-                                                        : m.SenderId,
+                                           ? m.ReceiverId
+                                           : m.SenderId,
                     StudentName = m.SenderId == user.Id
-                                                        ? m.Receiver.Fullname
-                                                        : m.Sender.Fullname,
+                                           ? m.Receiver.Fullname
+                                           : m.Sender.Fullname,
                     LastMessageSnippet = m.Content.Length > 50
-                                                        ? m.Content.Substring(0, 50) + "..."
-                                                        : m.Content,
+                                           ? m.Content.Substring(0, 50) + "..."
+                                           : m.Content,
                     LastMessageTime = m.SentOn
                 }).ToList()
             };
@@ -96,7 +100,7 @@ namespace careerBridge.Controllers
         // GET: /Employer/PostJob
         [HttpGet]
         public IActionResult PostJob()
-            => View();
+            => View(new JobListing());
 
         // POST: /Employer/PostJob
         [HttpPost]
@@ -146,7 +150,7 @@ namespace careerBridge.Controllers
             if (employer == null)
                 return NotFound("Employer profile not found.");
 
-            // Initialize view model
+            // Seed the ViewModel with today's date
             var vm = new CreateEventViewModel
             {
                 EventDate = DateTime.Today
