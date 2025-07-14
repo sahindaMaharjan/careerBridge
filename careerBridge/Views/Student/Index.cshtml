@@ -57,6 +57,7 @@
 
 <div class="container mt-5">
     <!-- Welcome -->
+<<<<<<< HEAD
     <h2 class="text-center text-success mb-3">Welcome, @username!</h2>
 
     <!-- My Applications Button -->
@@ -65,6 +66,9 @@
             <i class="bi bi-clipboard-check me-1"></i> My Applications Status
         </a>
     </div>
+=======
+    <h2 class="text-center text-success mb-4">Welcome, @username!</h2>
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
 
     <!-- Stats Cards -->
     <div class="row mb-4 text-white">
@@ -108,7 +112,11 @@
         <a asp-controller="Student" asp-action="AvailableSessions" class="btn btn-outline-success me-2">
             <i class="bi bi-people-fill me-1"></i> Mentor Sessions
         </a>
+<<<<<<< HEAD
         <a asp-controller="Student" asp-action="MyRegistrations" class="btn btn-outline-warning me-2">
+=======
+        <a asp-controller="Student" asp-action="MyRegistrations" class="btn btn-outline-warning">
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             <i class="bi bi-list-check me-1"></i> My Session Requests
         </a>
     </div>
@@ -131,13 +139,31 @@
         <div class="card-body">
             <form method="get" asp-action="Index" class="row g-3">
                 <div class="col-md-4">
+<<<<<<< HEAD
                     <input type="text" name="searchQuery" class="form-control" placeholder="e.g. software engineer" value="@Context.Request.Query["searchQuery"]" />
                 </div>
                 <div class="col-md-3">
                     <input type="text" name="location" class="form-control" placeholder="Location" value="@Context.Request.Query["location"]" />
+=======
+                    <input type="text"
+                           name="searchQuery"
+                           class="form-control"
+                           placeholder="e.g. software engineer"
+                           value="@Context.Request.Query["searchQuery"]" />
+                </div>
+                <div class="col-md-3">
+                    <input type="text"
+                           name="location"
+                           class="form-control"
+                           placeholder="Location"
+                           value="@Context.Request.Query["location"]" />
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
                 </div>
                 <div class="col-md-2">
-                    <input type="number" name="minSalary" class="form-control" placeholder="Min Salary" />
+                    <input type="number"
+                           name="minSalary"
+                           class="form-control"
+                           placeholder="Min Salary" />
                 </div>
                 <div class="col-md-2">
                     <select name="posted" class="form-select">
@@ -175,11 +201,16 @@
                             </p>
                             <p class="full-description d-none">@job.Description</p>
                         </div>
-                        <form asp-action="Apply" asp-controller="Student" method="post" class="ms-3">
+                        <form asp-action="Apply"
+                              asp-controller="Student"
+                              method="post"
+                              class="ms-3">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="jobTitle" value="@job.Title" />
                             <input type="hidden" name="company" value="@job.CompanyName" />
-                            <button type="submit" class="btn btn-sm btn-success">Apply</button>
+                            <button type="submit" class="btn btn-sm btn-success">
+                                Apply
+                            </button>
                         </form>
                     </div>
                 </li>

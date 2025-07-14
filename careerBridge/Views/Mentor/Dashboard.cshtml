@@ -1,5 +1,4 @@
 ﻿@model careerBridge.Models.MentorDashboardViewModel
-
 @using Microsoft.AspNetCore.Identity
 @using careerBridge.Areas.Identity.Data
 @inject UserManager<careerBridgeUser> UserManager
@@ -12,7 +11,24 @@
     var username = currentUser?.Fullname ?? "Mentor";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<style>
+    body {
+        background: #f9fbfd;
+    }
+
+    .card {
+        border-radius: 20px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+    }
+
+    .btn {
+        border-radius: 30px;
+        font-weight: 600;
+        padding: .6rem 1.4rem;
+    }
+</style>
 
 <div class="container mt-5">
     <!-- Header -->
@@ -21,24 +37,8 @@
         <p class="lead text-secondary">Manage your mentees, schedule sessions, and review requests.</p>
     </div>
 
-    <!-- Quick Nav Buttons -->
-    <div class="mb-4 text-center">
-        <a asp-action="Dashboard" class="btn btn-outline-primary me-2">
-            <i class="bi bi-speedometer2 me-1"></i> Dashboard
-        </a>
-        <a asp-action="Sessions" class="btn btn-outline-primary me-2">
-            <i class="bi bi-calendar-event me-1"></i> Sessions
-        </a>
-        <a asp-action="CreateSession" class="btn btn-outline-success me-2">
-            <i class="bi bi-plus-circle me-1"></i> New Session
-        </a>
-        <a asp-controller="Chat" asp-action="Index" class="btn btn-outline-info">
-            <i class="bi bi-chat-dots me-1"></i> Chat
-        </a>
-    </div>
-
     <!-- Stats Cards -->
-    <div class="row mb-5 text-white">
+    <div class="row mb-4 text-white">
         <div class="col-md-4 mb-3">
             <div class="card bg-primary text-center h-100">
                 <div class="card-body">
@@ -68,107 +68,98 @@
         </div>
     </div>
 
-    <div class="row">
-        <!-- Mentees Panel -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Your Mentees</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    @if (!Model.Mentees.Any())
-                    {
-                        <li class="list-group-item text-muted">No accepted mentees yet.</li>
-                    }
-                    else
-                    {
-                        @foreach (var mentee in Model.Mentees)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>@mentee.Fullname</strong><br />
-                                    <small class="text-muted">@mentee.Email</small>
-                                </div>
-                                <a asp-controller="Chat"
-                                   asp-action="Index"
-                                   asp-route-userId="@mentee.Id"
-                                   class="btn btn-sm btn-light">
-                                    Chat
-                                </a>
-                            </li>
-                        }
-                    }
-                </ul>
-            </div>
-        </div>
-
-        <!-- Upcoming Sessions Panel -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Upcoming Sessions</h5>
-                </div>
-                <div class="card-body">
-                    @if (!Model.UpcomingSessions.Any())
-                    {
-                        <p class="text-muted">No upcoming sessions.</p>
-                    }
-                    else
-                    {
-                        <ul class="list-unstyled">
-                            @foreach (var s in Model.UpcomingSessions)
-                            {
-                                <li class="mb-3">
-                                    <strong>@s.Title</strong><br />
-                                    <small>@s.SessionDate:g</small><br />
-                                    <a asp-action="ManageRegistrations"
-                                       asp-route-id="@s.MentorSessionID"
-                                       class="btn btn-sm btn-light mt-1">
-                                        Manage
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Registrations Panel -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">Requests to Review</h5>
-                </div>
-                <div class="card-body">
-                    @if (!Model.PendingRegistrations.Any())
-                    {
-                        <p class="text-muted">No pending requests.</p>
-                    }
-                    else
-                    {
-                        <ul class="list-unstyled">
-                            @foreach (var r in Model.PendingRegistrations)
-                            {
-                                <li class="mb-3">
-                                    <strong>@r.MentorSession.Title</strong><br />
-                                    <small>@r.Student.Fullname (@r.RequestedOn:g)</small><br />
-                                    <form asp-action="UpdateRegistration" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="registrationId" value="@r.RegistrationID" />
-                                        <button name="status" value="Accepted" class="btn btn-sm btn-success me-1">
-                                            Accept
-                                        </button>
-                                        <button name="status" value="Denied" class="btn btn-sm btn-danger">
-                                            Deny
-                                        </button>
-                                    </form>
-                                </li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
+    <!-- Quick Action Buttons -->
+    <div class="row mb-5 text-center">
+        <div class="col">
+            <a asp-action="Sessions" class="btn btn-outline-primary me-2">
+                <i class="bi bi-calendar-event me-1"></i> Sessions
+            </a>
+            <a asp-action="CreateSession" class="btn btn-success me-2">
+                <i class="bi bi-plus-circle me-1"></i> New Session
+            </a>
+            <a asp-controller="Chat" asp-action="SelectUser" class="btn btn-info">
+                <i class="bi bi-chat-dots me-1"></i> Chat
+            </a>
         </div>
     </div>
+
+    <!-- Your Mentees -->
+    <h3>Your Mentees</h3>
+    <table class="table table-hover mb-5">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Mentees.Any())
+            {
+                <tr>
+                    <td colspan="3" class="text-muted">No accepted mentees yet.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var m in Model.Mentees)
+                {
+                    <tr>
+                        <td>@m.Fullname</td>
+                        <td>@m.Email</td>
+                        <td>
+                            <a asp-controller="Chat"
+                               asp-action="SelectUser"
+                               asp-route-userId="@m.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Chat
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Requests to Review -->
+    <h3>Requests to Review</h3>
+    <table class="table table-hover mb-5">
+        <thead class="table-light">
+            <tr>
+                <th>Session</th>
+                <th>Student / Requested On</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.PendingRegistrations.Any())
+            {
+                <tr>
+                    <td colspan="3" class="text-muted">No pending requests.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var r in Model.PendingRegistrations)
+                {
+                    <tr>
+                        <td>@r.MentorSession.Title</td>
+                        <td>@r.Student.Fullname (@r.RequestedOn:g)</td>
+                        <td>
+                            <form asp-action="UpdateRegistration" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="registrationId" value="@r.RegistrationID" />
+                                <button name="status" value="Accepted" class="btn btn-sm btn-success me-1">
+                                    Accept
+                                </button>
+                                <button name="status" value="Denied" class="btn btn-sm btn-danger">
+                                    Deny
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
 </div>

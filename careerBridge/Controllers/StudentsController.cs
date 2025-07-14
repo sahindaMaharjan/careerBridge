@@ -38,12 +38,86 @@ namespace careerBridge.Controllers
             _eventbriteToken = config["Eventbrite:Token"]!;
         }
 
+<<<<<<< HEAD
         public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
+=======
+        // ────────────────────────────────────────────────────────────────────────────
+        // External Eventbrite API
+        // ────────────────────────────────────────────────────────────────────────────
+        [HttpGet]
+        public async Task<IActionResult> EventList(
+            string keyword,
+            string location,
+            string startDate,
+            string endDate)
         {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _eventbriteToken);
+
+            // … your existing Eventbrite search logic …
+
+            var model = new EventListViewModel
+            {
+                SearchResults = new List<EventItem>(),
+                DefaultEvents = new List<EventItem>()
+            };
+            return View(model);
+        }
+
+        // ────────────────────────────────────────────────────────────────────────────
+        // External Job Search + Dashboard Counts
+        // ────────────────────────────────────────────────────────────────────────────
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            string searchQuery,
+            string location,
+            int? posted,
+            int? minSalary)
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
+        {
+            // 1) Get current user
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Challenge();
+
+            // 2) Look up numeric StudentID
+            var studentProfile = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserID == user.Id);
+
+            if (studentProfile != null)
+            {
+                int sid = studentProfile.StudentID;
+
+                // 3a) Count applications
+                ViewBag.AppliedJobCount = await _context.JobApplications
+                    .CountAsync(a => a.StudentID == sid);
+
+                // 3b) Count chats
+                ViewBag.ChatCount = await _context.Messages
+                    .CountAsync(m => m.SenderId == user.Id || m.ReceiverId == user.Id);
+
+                // 3c) Count event registrations
+                ViewBag.EventRegisteredCount = await _context.EventRegistrations
+                    .CountAsync(r => r.StudentID == sid);
+            }
+            else
+            {
+                ViewBag.AppliedJobCount = 0;
+                ViewBag.ChatCount = 0;
+                ViewBag.EventRegisteredCount = 0;
+            }
+
+            // 4) External job search logic
             var jobList = new List<ExternalJobViewModel>();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
+<<<<<<< HEAD
                 var json = await _jobSearchService.SearchJobsAsync(searchQuery, location, posted, minSalary);
+=======
+                var json = await _jobSearchService
+                                  .SearchJobsAsync(searchQuery, location, posted, minSalary);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
                 var response = JsonConvert.DeserializeObject<JobApiResponse>(json);
                 if (response?.Data != null)
                     jobList = response.Data;
@@ -65,7 +139,13 @@ namespace careerBridge.Controllers
 
         public async Task<IActionResult> JobDetails(int id)
         {
+<<<<<<< HEAD
             var job = await _context.JobListings.Include(j => j.Employer).FirstOrDefaultAsync(j => j.JobListingID == id);
+=======
+            var job = await _context.JobListings
+                                    .Include(j => j.Employer)
+                                    .FirstOrDefaultAsync(j => j.JobListingID == id);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             if (job == null) return NotFound();
             return View(job);
         }
@@ -75,7 +155,13 @@ namespace careerBridge.Controllers
             var userId = _userManager.GetUserId(User);
             if (userId == null) return RedirectToAction("Login", "Account");
 
+<<<<<<< HEAD
             var student = await _context.Students.Include(s => s.RequestedMentors).FirstOrDefaultAsync(s => s.UserID == userId);
+=======
+            var student = await _context.Students
+                .Include(s => s.RequestedMentors)
+                .FirstOrDefaultAsync(s => s.UserID == userId);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             if (student == null) return Unauthorized();
 
             var mentors = await _context.Mentors.ToListAsync();
@@ -93,7 +179,13 @@ namespace careerBridge.Controllers
         public async Task<IActionResult> SendMentorRequest(int mentorId)
         {
             var userId = _userManager.GetUserId(User)!;
+<<<<<<< HEAD
             var student = await _context.Students.Include(s => s.RequestedMentors).FirstOrDefaultAsync(s => s.UserID == userId);
+=======
+            var student = await _context.Students
+                .Include(s => s.RequestedMentors)
+                .FirstOrDefaultAsync(s => s.UserID == userId);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             if (student == null) return NotFound();
 
             if (!student.RequestedMentors.Any(rm => rm.MentorID == mentorId))
@@ -110,7 +202,12 @@ namespace careerBridge.Controllers
 
         public async Task<IActionResult> MentorDetails(int id)
         {
+<<<<<<< HEAD
             var mentor = await _context.Mentors.FirstOrDefaultAsync(m => m.MentorID == id);
+=======
+            var mentor = await _context.Mentors
+                                      .FirstOrDefaultAsync(m => m.MentorID == id);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             if (mentor == null) return NotFound();
             return View(mentor);
         }
@@ -123,11 +220,24 @@ namespace careerBridge.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+<<<<<<< HEAD
             var ev = await _context.Events.Include(e => e.Employer).FirstOrDefaultAsync(e => e.EventID == id);
+=======
+            var ev = await _context.Events
+                                   .Include(e => e.Employer)
+                                   .FirstOrDefaultAsync(e => e.EventID == id);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
             if (ev == null) return NotFound();
             return View(ev);
         }
 
+<<<<<<< HEAD
+=======
+        // ────────────────────────────────────────────────────────────────────────────
+        // Mentor Sessions (New Feature)
+        // ────────────────────────────────────────────────────────────────────────────
+        [HttpGet]
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
         public async Task<IActionResult> AvailableSessions()
         {
             var me = await _userManager.GetUserAsync(User)!;
@@ -164,9 +274,7 @@ namespace careerBridge.Controllers
             bool exists = await _context.MentorSessionRegistrations.AnyAsync(r => r.MentorSessionID == sessionId && r.StudentId == me.Id);
 
             if (exists)
-            {
                 TempData["Error"] = "You’ve already requested this session.";
-            }
             else
             {
                 _context.MentorSessionRegistrations.Add(new MentorSessionRegistration
@@ -181,6 +289,10 @@ namespace careerBridge.Controllers
             return RedirectToAction(nameof(AvailableSessions));
         }
 
+<<<<<<< HEAD
+=======
+        [HttpGet]
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
         public async Task<IActionResult> MyRegistrations()
         {
             var me = await _userManager.GetUserAsync(User)!;
@@ -193,11 +305,29 @@ namespace careerBridge.Controllers
             return View(regs);
         }
 
+<<<<<<< HEAD
         public async Task<IActionResult> MyApplications()
+=======
+        // ────────────────────────────────────────────────────────────────────────────
+        // Calendar / Reminders
+        // ────────────────────────────────────────────────────────────────────────────
+
+        // Renders the student calendar page
+        [HttpGet]
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
+        // Returns accepted sessions as JSON events for FullCalendar
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarEvents()
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
+<<<<<<< HEAD
             var student = await _context.Students.FirstOrDefaultAsync(s => s.UserID == user.Id);
             if (student == null) return NotFound("Student profile not found.");
 
@@ -218,6 +348,27 @@ namespace careerBridge.Controllers
                 .ToListAsync();
 
             return View(applications);
+=======
+            var studentProfile = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserID == user.Id);
+            if (studentProfile == null) return Unauthorized();
+
+            // no sid needed here
+            var regs = await _context.MentorSessionRegistrations
+                .Where(r => r.StudentId == user.Id
+                         && r.Status == RegistrationStatus.Accepted)
+                .Include(r => r.MentorSession)
+                .ToListAsync();
+
+            var events = regs.Select(r => new
+            {
+                title = r.MentorSession.Title,
+                start = r.MentorSession.SessionDate.ToString("s"),
+                id = r.RegistrationID
+            });
+
+            return Json(events);
+>>>>>>> 340ce559dcf2625076fae191da88cdc738a2c09a
         }
     }
 }
