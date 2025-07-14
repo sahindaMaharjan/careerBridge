@@ -1,0 +1,60 @@
+﻿@model List<careerBridge.ViewModels.StudentApplicationViewModel>
+
+
+@{
+    ViewData["Title"] = "My Job Applications";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-primary">My Job Applications</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You have not applied for any jobs yet.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Applied On</th>
+                <th>Cover Letter</th>
+                <th>Resume</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var app in Model)
+            {
+                <tr>
+                    <td>@app.JobTitle</td>
+                    <td>@app.CompanyName</td>
+                    <td>@app.AppliedOn.ToString("MMM dd, yyyy hh:mm tt")</td>
+                    <td>@app.CoverLetter</td>
+                    <td>
+                        <a href="@Url.Content($"~/resumes/{app.ResumePath}")"
+                           class="btn btn-sm btn-outline-primary" target="_blank">
+                            View Resume
+                        </a>
+                    </td>
+                    <td>
+                        @if (app.Status == "Approved")
+                        {
+                            <span class="badge bg-success">@app.Status</span>
+                        }
+                        else if (app.Status == "Rejected")
+                        {
+                            <span class="badge bg-danger">@app.Status</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@app.Status</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

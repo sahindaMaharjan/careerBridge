@@ -1,5 +1,50 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
+@inject SignInManager<careerBridgeUser> SignInManager
+
+@model careerBridge.Models.JobListing
+
 @{
+    ViewData["Title"] = "Job Details";
+    var isStudent = User.IsInRole("Student");
 }
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">@Model.Title</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> @Model.Description</p>
+            <p><strong>Salary:</strong> $@Model.Salary</p>
+            <p><strong>Location:</strong> @Model.Location</p>
+            <p><strong>Posted On:</strong> @Model.PostedOn.ToString("MMMM dd, yyyy")</p>
+            <p>
+                <strong>Status:</strong>
+                @if (Model.IsOpen)
+                {
+                    <span class="badge bg-success">Open</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Closed</span>
+                }
+            </p>
+
+            @if (isStudent)
+            {
+                if (Model.IsOpen)
+                {
+                    <a asp-controller="Job" asp-action="Apply" asp-route-id="@Model.JobListingID" class="btn btn-success me-2">Apply for this Job</a>
+                }
+                else
+                {
+                    <div class="alert alert-warning mt-3">This job is currently closed for applications.</div>
+                }
+            }
+
+            <a asp-controller="Employer" asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>

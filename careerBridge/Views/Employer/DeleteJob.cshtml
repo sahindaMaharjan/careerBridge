@@ -1,0 +1,22 @@
+﻿@model careerBridge.Models.JobListing
+
+@{
+    ViewData["Title"] = "Delete Job";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-danger">Are you sure you want to delete this job?</h2>
+    <div class="mb-4">
+        <strong>Title:</strong> @Model.Title <br />
+        <strong>Posted On:</strong> @Model.PostedOn.ToShortDateString() <br />
+        <strong>Description:</strong> @Model.Description
+    </div>
+
+    <form asp-action="DeleteJob" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="JobListingID" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

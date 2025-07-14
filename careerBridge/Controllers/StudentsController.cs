@@ -1,5 +1,4 @@
 ﻿// File: Controllers/StudentController.cs
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using careerBridge.Areas.Identity.Data;
 using careerBridge.Models;
 using careerBridge.Services;
+using careerBridge.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,45 +38,12 @@ namespace careerBridge.Controllers
             _eventbriteToken = config["Eventbrite:Token"]!;
         }
 
-        // ────────────────────────────────────────────────────────────────────────────
-        // External Eventbrite API
-        // ────────────────────────────────────────────────────────────────────────────
-        [HttpGet]
-        public async Task<IActionResult> EventList(
-            string keyword,
-            string location,
-            string startDate,
-            string endDate)
-        {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _eventbriteToken);
-
-            // … your existing Eventbrite search logic …
-
-            var model = new EventListViewModel
-            {
-                SearchResults = new List<EventItem>(),
-                DefaultEvents = new List<EventItem>()
-            };
-            return View(model);
-        }
-
-        // ────────────────────────────────────────────────────────────────────────────
-        // External Job Search
-        // ────────────────────────────────────────────────────────────────────────────
-        [HttpGet]
-        public async Task<IActionResult> Index(
-            string searchQuery,
-            string location,
-            int? posted,
-            int? minSalary)
+        public async Task<IActionResult> Index(string searchQuery, string location, int? posted, int? minSalary)
         {
             var jobList = new List<ExternalJobViewModel>();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                var json = await _jobSearchService
-                                      .SearchJobsAsync(searchQuery, location, posted, minSalary);
+                var json = await _jobSearchService.SearchJobsAsync(searchQuery, location, posted, minSalary);
                 var response = JsonConvert.DeserializeObject<JobApiResponse>(json);
                 if (response?.Data != null)
                     jobList = response.Data;
@@ -84,60 +51,39 @@ namespace careerBridge.Controllers
             return View(jobList);
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
         public IActionResult Apply(string jobTitle, string company)
         {
             TempData["Message"] = $"You applied for: {jobTitle} at {company}";
             return RedirectToAction(nameof(JobList));
         }
 
-        // ────────────────────────────────────────────────────────────────────────────
-        // Internal Jobs Posted by Employers
-        // ────────────────────────────────────────────────────────────────────────────
-        [HttpGet]
         public async Task<IActionResult> JobList()
         {
-            var jobs = await _context.JobListings
-                                     .Include(j => j.Employer)
-                                     .OrderByDescending(j => j.PostedOn)
-                                     .ToListAsync();
+            var jobs = await _context.JobListings.Include(j => j.Employer).OrderByDescending(j => j.PostedOn).ToListAsync();
             return View(jobs);
         }
 
-        [HttpGet]
         public async Task<IActionResult> JobDetails(int id)
         {
-            var job = await _context.JobListings
-                                    .Include(j => j.Employer)
-                                    .FirstOrDefaultAsync(j => j.JobListingID == id);
-            if (job == null)
-                return NotFound();
+            var job = await _context.JobListings.Include(j => j.Employer).FirstOrDefaultAsync(j => j.JobListingID == id);
+            if (job == null) return NotFound();
             return View(job);
         }
 
-        // ────────────────────────────────────────────────────────────────────────────
-        // Mentor Booking
-        // ────────────────────────────────────────────────────────────────────────────
-        [HttpGet]
         public async Task<IActionResult> BookMentor()
         {
             var userId = _userManager.GetUserId(User);
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var student = await _context.Students
-                .Include(s => s.RequestedMentors)
-                .FirstOrDefaultAsync(s => s.UserID == userId);
-            if (student == null)
-                return Unauthorized();
+            var student = await _context.Students.Include(s => s.RequestedMentors).FirstOrDefaultAsync(s => s.UserID == userId);
+            if (student == null) return Unauthorized();
 
             var mentors = await _context.Mentors.ToListAsync();
             var model = mentors.Select(m => new BookMentorViewModel
             {
                 MentorID = m.MentorID,
                 FullName = m.FullName,
-                Requested = student.RequestedMentors
-                                 .Any(rm => rm.MentorID == m.MentorID)
+                Requested = student.RequestedMentors.Any(rm => rm.MentorID == m.MentorID)
             }).ToList();
 
             return View(model);
@@ -147,11 +93,8 @@ namespace careerBridge.Controllers
         public async Task<IActionResult> SendMentorRequest(int mentorId)
         {
             var userId = _userManager.GetUserId(User)!;
-            var student = await _context.Students
-                .Include(s => s.RequestedMentors)
-                .FirstOrDefaultAsync(s => s.UserID == userId);
-            if (student == null)
-                return NotFound();
+            var student = await _context.Students.Include(s => s.RequestedMentors).FirstOrDefaultAsync(s => s.UserID == userId);
+            if (student == null) return NotFound();
 
             if (!student.RequestedMentors.Any(rm => rm.MentorID == mentorId))
             {
@@ -165,46 +108,26 @@ namespace careerBridge.Controllers
             return RedirectToAction(nameof(BookMentor));
         }
 
-        [HttpGet]
         public async Task<IActionResult> MentorDetails(int id)
         {
-            var mentor = await _context.Mentors
-                .FirstOrDefaultAsync(m => m.MentorID == id);
-            if (mentor == null)
-                return NotFound();
+            var mentor = await _context.Mentors.FirstOrDefaultAsync(m => m.MentorID == id);
+            if (mentor == null) return NotFound();
             return View(mentor);
         }
 
-        // ────────────────────────────────────────────────────────────────────────────
-        // Employer-Posted Events
-        // ────────────────────────────────────────────────────────────────────────────
-        [HttpGet]
         public async Task<IActionResult> Events()
         {
-            var events = await _context.Events
-                                       .Include(e => e.Employer)
-                                       .OrderBy(e => e.EventDate)
-                                       .ToListAsync();
+            var events = await _context.Events.Include(e => e.Employer).OrderBy(e => e.EventDate).ToListAsync();
             return View(events);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var ev = await _context.Events
-                                   .Include(e => e.Employer)
-                                   .FirstOrDefaultAsync(e => e.EventID == id);
-            if (ev == null)
-                return NotFound();
+            var ev = await _context.Events.Include(e => e.Employer).FirstOrDefaultAsync(e => e.EventID == id);
+            if (ev == null) return NotFound();
             return View(ev);
         }
 
-        // ────────────────────────────────────────────────────────────────────────────
-        // Mentor Sessions (New Feature)
-        // ────────────────────────────────────────────────────────────────────────────
-
-        // GET: /Student/AvailableSessions
-        [HttpGet]
         public async Task<IActionResult> AvailableSessions()
         {
             var me = await _userManager.GetUserAsync(User)!;
@@ -216,8 +139,7 @@ namespace careerBridge.Controllers
 
             var model = sessions.Select(s =>
             {
-                var mine = s.Registrations
-                            .FirstOrDefault(r => r.StudentId == me.Id);
+                var mine = s.Registrations.FirstOrDefault(r => r.StudentId == me.Id);
 
                 return new AvailableSessionViewModel
                 {
@@ -226,8 +148,7 @@ namespace careerBridge.Controllers
                     SessionDate = s.SessionDate,
                     MentorName = s.Mentor.FullName,
                     Capacity = s.Capacity,
-                    AcceptedCount = s.Registrations
-                                          .Count(r => r.Status == RegistrationStatus.Accepted),
+                    AcceptedCount = s.Registrations.Count(r => r.Status == RegistrationStatus.Accepted),
                     MyStatus = mine?.Status
                 };
             }).ToList();
@@ -235,14 +156,12 @@ namespace careerBridge.Controllers
             return View(model);
         }
 
-        // POST: /Student/RegisterSession
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterSession(int sessionId)
         {
             var me = await _userManager.GetUserAsync(User)!;
 
-            bool exists = await _context.MentorSessionRegistrations
-                .AnyAsync(r => r.MentorSessionID == sessionId && r.StudentId == me.Id);
+            bool exists = await _context.MentorSessionRegistrations.AnyAsync(r => r.MentorSessionID == sessionId && r.StudentId == me.Id);
 
             if (exists)
             {
@@ -262,19 +181,43 @@ namespace careerBridge.Controllers
             return RedirectToAction(nameof(AvailableSessions));
         }
 
-        // GET: /Student/MyRegistrations
-        [HttpGet]
         public async Task<IActionResult> MyRegistrations()
         {
             var me = await _userManager.GetUserAsync(User)!;
 
             var regs = await _context.MentorSessionRegistrations
                 .Where(r => r.StudentId == me.Id)
-                .Include(r => r.MentorSession)
-                    .ThenInclude(s => s.Mentor)
+                .Include(r => r.MentorSession).ThenInclude(s => s.Mentor)
                 .ToListAsync();
 
             return View(regs);
+        }
+
+        public async Task<IActionResult> MyApplications()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserID == user.Id);
+            if (student == null) return NotFound("Student profile not found.");
+
+            var applications = await _context.JobApplications
+                .Include(a => a.JobListing).ThenInclude(j => j.Employer)
+                .Where(a => a.StudentID == student.StudentID)
+                .OrderByDescending(a => a.AppliedOn)
+               .Select(a => new StudentApplicationViewModel
+               {
+                   ApplicationID = a.ApplicationID,
+                   JobTitle = a.JobListing.Title,
+                   CompanyName = a.JobListing.Employer.CompanyName,
+                   AppliedOn = a.AppliedOn,
+                   Status = a.Status,
+                   ResumePath = a.ResumePath,
+                   CoverLetter = a.CoverLetter
+               })
+                .ToListAsync();
+
+            return View(applications);
         }
     }
 }

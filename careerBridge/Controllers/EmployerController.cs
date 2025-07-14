@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using careerBridge.Areas.Identity.Data;
 using careerBridge.Models;
+using careerBridge.ViewModels;
 
 namespace careerBridge.Controllers
 {
@@ -23,19 +24,14 @@ namespace careerBridge.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Employer
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
+            if (user == null) return Unauthorized();
 
-            var employer = await _context.Employers
-                .FirstOrDefaultAsync(e => e.UserID == user.Id);
-            if (employer == null)
-                return NotFound("Employer profile not found.");
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound("Employer profile not found.");
 
-            // Load dashboard data
             var jobs = await _context.JobListings
                 .Where(j => j.EmployerID == employer.EmployerID)
                 .Include(j => j.Applications)
@@ -81,15 +77,9 @@ namespace careerBridge.Controllers
 
                 RecentChats = messages.Select(m => new ChatSummary
                 {
-                    StudentId = m.SenderId == user.Id
-                                           ? m.ReceiverId
-                                           : m.SenderId,
-                    StudentName = m.SenderId == user.Id
-                                           ? m.Receiver.Fullname
-                                           : m.Sender.Fullname,
-                    LastMessageSnippet = m.Content.Length > 50
-                                           ? m.Content.Substring(0, 50) + "..."
-                                           : m.Content,
+                    StudentId = m.SenderId == user.Id ? m.ReceiverId : m.SenderId,
+                    StudentName = m.SenderId == user.Id ? m.Receiver.Fullname : m.Sender.Fullname,
+                    LastMessageSnippet = m.Content.Length > 50 ? m.Content.Substring(0, 50) + "..." : m.Content,
                     LastMessageTime = m.SentOn
                 }).ToList()
             };
@@ -97,28 +87,27 @@ namespace careerBridge.Controllers
             return View(model);
         }
 
-        // GET: /Employer/PostJob
-        [HttpGet]
-        public IActionResult PostJob()
-            => View(new JobListing());
+        public IActionResult PostJob() => View(new JobListing());
 
-        // POST: /Employer/PostJob
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PostJob(JobListing job)
         {
-            if (!ModelState.IsValid)
-                return View(job);
+            if (!ModelState.IsValid) return View(job);
 
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
+            if (user == null) return Unauthorized();
 
-            var employer = await _context.Employers
-                .FirstOrDefaultAsync(e => e.UserID == user.Id);
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
             if (employer == null)
             {
                 ModelState.AddModelError("", "Employer profile not found.");
+                return View(job);
+            }
+
+            if (job.MaxApplicants < 1)
+            {
+                ModelState.AddModelError("MaxApplicants", "Max Applicants must be at least 1.");
                 return View(job);
             }
 
@@ -132,43 +121,27 @@ namespace careerBridge.Controllers
             return RedirectToAction(nameof(PostJobConfirmation));
         }
 
-        // GET: /Employer/PostJobConfirmation
-        [HttpGet]
-        public IActionResult PostJobConfirmation()
-            => View();
+        public IActionResult PostJobConfirmation() => View();
 
-        // GET: /Employer/CreateEvent
-        [HttpGet]
         public async Task<IActionResult> CreateEvent()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
+            if (user == null) return Unauthorized();
 
-            var employer = await _context.Employers
-                .FirstOrDefaultAsync(e => e.UserID == user.Id);
-            if (employer == null)
-                return NotFound("Employer profile not found.");
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound("Employer profile not found.");
 
-            // Seed the ViewModel with today's date
-            var vm = new CreateEventViewModel
-            {
-                EventDate = DateTime.Today
-            };
-            return View(vm);
+            return View(new CreateEventViewModel { EventDate = DateTime.Today });
         }
 
-        // POST: /Employer/CreateEvent
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel vm)
         {
-            if (!ModelState.IsValid)
-                return View(vm);
+            if (!ModelState.IsValid) return View(vm);
 
             var user = await _userManager.GetUserAsync(User);
-            var employer = await _context.Employers
-                                .FirstOrDefaultAsync(e => e.UserID == user!.Id);
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user!.Id);
 
             var ev = new Event
             {
@@ -185,14 +158,8 @@ namespace careerBridge.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // === GET: PostEvent ===
-        [HttpGet]
-        public IActionResult PostEvent()
-        {
-            return View();
-        }
+        public IActionResult PostEvent() => View();
 
-        // === POST: PostEvent ===
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PostEvent(Event model)
@@ -201,7 +168,6 @@ namespace careerBridge.Controllers
             {
                 _context.Events.Add(model);
                 await _context.SaveChangesAsync();
-
                 TempData["SuccessMessage"] = "Event posted successfully!";
                 return RedirectToAction("Index");
             }
@@ -209,8 +175,6 @@ namespace careerBridge.Controllers
             return View(model);
         }
 
-        // ✅ NEW: GET /Employer/JobListings
-        [HttpGet]
         public async Task<IActionResult> JobListings()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -231,13 +195,112 @@ namespace careerBridge.Controllers
                 IsOpen = j.IsOpen
             }).ToList();
 
+            return View(new EmployerDashboardViewModel { Jobs = jobs });
+        }
 
-            var model = new EmployerDashboardViewModel
-            {
-                Jobs = jobs
-            };
+        public async Task<IActionResult> DeleteJob(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-            return View(model);
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound();
+
+            var job = await _context.JobListings
+                .FirstOrDefaultAsync(j => j.JobListingID == id && j.EmployerID == employer.EmployerID);
+
+            if (job == null)
+                return NotFound("Job not found or you do not have permission.");
+
+            return View(job);
+        }
+
+        [HttpPost, ActionName("DeleteJob")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmDeleteJob(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound();
+
+            var job = await _context.JobListings
+                .Include(j => j.Applications)
+                .FirstOrDefaultAsync(j => j.JobListingID == id && j.EmployerID == employer.EmployerID);
+
+            if (job == null)
+                return NotFound("Job not found or you do not have permission.");
+
+            _context.JobApplications.RemoveRange(job.Applications);
+            _context.JobListings.Remove(job);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Job deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleJobStatus(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+            if (employer == null) return NotFound();
+
+            var job = await _context.JobListings
+                .FirstOrDefaultAsync(j => j.JobListingID == id && j.EmployerID == employer.EmployerID);
+
+            if (job == null) return NotFound();
+
+            job.IsOpen = !job.IsOpen;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Applications(int jobId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserID == user.Id);
+
+            if (employer == null) return Unauthorized();
+
+            var applications = await _context.JobApplications
+                .Include(a => a.Student)
+                .Include(a => a.JobListing)
+                .Where(a => a.JobListing.EmployerID == employer.EmployerID && a.JobListingID == jobId)
+                .Select(a => new JobApplicationViewModel
+                {
+                    ApplicationID = a.ApplicationID,
+                    StudentName = a.Student.FullName,
+                    CoverLetter = a.CoverLetter ?? "",
+                    ResumePath = a.ResumePath,
+                    Status = a.Status,
+                    AppliedOn = a.AppliedOn
+                })
+                .ToListAsync();
+
+            ViewBag.JobTitle = _context.JobListings.FirstOrDefault(j => j.JobListingID == jobId)?.Title ?? "Job";
+
+            return View(applications);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateApplicationStatus(int applicationId, string status)
+        {
+            var application = await _context.JobApplications.FindAsync(applicationId);
+            if (application == null)
+                return NotFound();
+
+            application.Status = status;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Applications", new { jobId = application.JobListingID });
         }
     }
 }

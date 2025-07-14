@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using careerBridge.Areas.Identity.Data;
 using careerBridge.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -7,27 +8,14 @@ using careerBridge.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1) Configure connection string
-var connectionString = builder.Configuration
-    .GetConnectionString("careerBridgeDbConnection")
+// 1) Configure DB connection
+var connectionString = builder.Configuration.GetConnectionString("careerBridgeDbConnection")
     ?? throw new InvalidOperationException("Connection string 'careerBridgeDbConnection' not found.");
 
-
-builder.Services.AddScoped<JobSearchService>();
-
-// 2) Add DbContext (EF Core)
 builder.Services.AddDbContext<careerBridgeDb>(options =>
     options.UseSqlServer(connectionString));
 
-// 3) Configure Identity options (lockout, 2FA, email confirmation, etc.)
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = true;
-    options.SignIn.RequireConfirmedEmail = true;
-    options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-});
-
-// 4) Add Identity (with roles) and EF stores
+// 2) Add Identity with Roles
 builder.Services.AddIdentity<careerBridgeUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -35,16 +23,27 @@ builder.Services.AddIdentity<careerBridgeUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<careerBridgeDb>()
     .AddDefaultTokenProviders();
 
-// 5) Email sender for confirmation links
+// 3) Configure Identity options (optional)
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+});
+
+// 4) Email service
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// 6) Add MVC + Razor Pages
+// 5) Custom job search service
+builder.Services.AddScoped<JobSearchService>();
+
+// 6) MVC & Razor Pages
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// 7) Seed initial roles (Student, Employer, Mentor)
+// 7) Seed Roles
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -59,7 +58,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 8) HTTP request pipeline
+// 8) Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -67,22 +66,25 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Enables default static file handling
+
+// ✅ Custom file serving for resume files stored under wwwroot/resumes
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "resumes")),
+    RequestPath = "/resumes"
+});
 
 app.UseRouting();
 
-// 9) Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 10) Map routes
-
-// 10a) MVC controllers + views
+// 9) Routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// 10b) Razor Pages
 app.MapRazorPages();
-
 app.Run();

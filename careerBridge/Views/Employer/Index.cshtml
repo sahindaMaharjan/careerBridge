@@ -157,10 +157,15 @@
                             </td>
                             <td>
                                 <a asp-controller="Job" asp-action="Details" asp-route-id="@job.Id" class="btn btn-sm btn-outline-secondary">View</a>
+
                                 @if (job.IsOpen)
                                 {
                                     <a asp-controller="Job" asp-action="Edit" asp-route-id="@job.Id" class="btn btn-sm btn-outline-success ms-1">Edit</a>
                                 }
+
+                                <a asp-controller="Employer" asp-action="DeleteJob" asp-route-id="@job.Id" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+
+                                <a asp-controller="Employer" asp-action="Applications" asp-route-jobId="@job.Id" class="btn btn-sm btn-outline-primary ms-1">Applications</a>
                             </td>
                         </tr>
                     }

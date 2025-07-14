@@ -21,27 +21,33 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
-                            <label asp-for="Title" class="form-label"></label>
-                            <input asp-for="Title" class="form-control" />
+                            <label asp-for="Title" class="form-label">Job Title</label>
+                            <input asp-for="Title" class="form-control" placeholder="e.g. Frontend Developer" />
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Description" class="form-label"></label>
-                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <label asp-for="Description" class="form-label">Job Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Write a detailed job description..."></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Salary" class="form-label"></label>
-                            <input asp-for="Salary" class="form-control" />
+                            <label asp-for="Salary" class="form-label">Salary</label>
+                            <input asp-for="Salary" class="form-control" placeholder="e.g. 60000" />
                             <span asp-validation-for="Salary" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Location" class="form-label"></label>
-                            <input asp-for="Location" class="form-control" />
+                            <label asp-for="Location" class="form-label">Location</label>
+                            <input asp-for="Location" class="form-control" placeholder="e.g. Toronto, ON" />
                             <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MaxApplicants" class="form-label">Max Applicants</label>
+                            <input asp-for="MaxApplicants" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="MaxApplicants" class="text-danger"></span>
                         </div>
 
                         <div class="form-check form-switch mb-3">

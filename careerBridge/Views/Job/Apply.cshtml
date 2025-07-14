@@ -1,5 +1,30 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model careerBridge.ViewModels.ApplyJobViewModel
 @{
+    ViewData["Title"] = "Apply for Job";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Apply for @Model.JobTitle at @Model.CompanyName</h2>
+
+<form asp-action="Apply" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="JobListingID" />
+
+    <div class="mb-3">
+        <label asp-for="CoverLetter" class="form-label"></label>
+        <textarea asp-for="CoverLetter" class="form-control" rows="6"></textarea>
+        <span asp-validation-for="CoverLetter" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Resume" class="form-label"></label>
+        <input asp-for="Resume" type="file" class="form-control" />
+        <span asp-validation-for="Resume" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Application</button>
+    <a asp-action="Details" asp-route-id="@Model.JobListingID" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -424,8 +424,15 @@ namespace careerBridge.Migrations
                     b.Property<DateTime>("AppliedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CoverLetter")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("JobListingID")
                         .HasColumnType("int");
+
+                    b.Property<string>("ResumePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -462,6 +469,9 @@ namespace careerBridge.Migrations
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxApplicants")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");

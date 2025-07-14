@@ -1,0 +1,47 @@
+﻿@model careerBridge.Models.JobListing
+
+@{
+    ViewData["Title"] = "Edit Job";
+}
+
+<div class="container mt-5">
+    <h2>Edit Job</h2>
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="JobListingID" />
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label"></label>
+            <input asp-for="Location" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Salary" class="form-label"></label>
+            <input asp-for="Salary" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MaxApplicants" class="form-label"></label>
+            <input asp-for="MaxApplicants" class="form-control" />
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            <input asp-for="IsOpen" class="form-check-input" />
+            <label asp-for="IsOpen" class="form-check-label">Job is Open</label>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-controller="Employer" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>

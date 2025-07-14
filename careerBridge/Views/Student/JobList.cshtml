@@ -29,12 +29,13 @@ else
                                 Salary: @(job.Salary.HasValue? job.Salary.Value.ToString("C0") : "—")
                             </small>
                         </p>
-                        <form asp-controller="Student" asp-action="Apply" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="jobTitle" value="@job.Title" />
-                            <input type="hidden" name="company" value="@job.Employer.CompanyName" />
-                            <button type="submit" class="btn btn-primary">Apply Now</button>
-                        </form>
+
+                        <a asp-controller="Job"
+                           asp-action="Apply"
+                           asp-route-id="@job.JobListingID"
+                           class="btn btn-primary">
+                            Apply Now
+                        </a>
                     </div>
                 </div>
             </div>
@@ -45,4 +46,8 @@ else
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-success mt-4">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger mt-4">@TempData["Error"]</div>
 }

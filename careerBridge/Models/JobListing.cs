@@ -1,6 +1,4 @@
-﻿// File: Models/JobListing.cs
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +16,6 @@ namespace careerBridge.Models
 
         public string? Description { get; set; }
 
-        // Salary is optional
         public decimal? Salary { get; set; }
 
         public string? Location { get; set; }
@@ -27,11 +24,15 @@ namespace careerBridge.Models
 
         public DateTime PostedOn { get; set; } = DateTime.Now;
 
+        // Limit the number of student applicants (newly added)
+        [Range(1, int.MaxValue, ErrorMessage = "Max Applicants must be at least 1.")]
+        public int MaxApplicants { get; set; }
+
         // Foreign key to Employer
         public int EmployerID { get; set; }
 
         [ForeignKey("EmployerID")]
-        [ValidateNever]  // Skip MVC validation for navigation property
+        [ValidateNever]
         public EmployerProfile Employer { get; set; } = null!;
 
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
