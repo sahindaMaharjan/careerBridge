@@ -22,16 +22,12 @@
 
     .card {
         border-radius: 20px;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-        background-color: #ffffff;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        background: #fff;
     }
 
     .card-body {
         padding: 2rem 1.5rem;
-    }
-
-    .card h5 {
-        font-weight: 600;
     }
 
     .display-6 {
@@ -43,54 +39,50 @@
     .btn {
         border-radius: 30px;
         font-weight: 600;
-        padding: 0.6rem 1.4rem;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
+        padding: .6rem 1.4rem;
     }
 
     h3 {
-        color: #1a1a1a;
         margin-top: 2rem;
         font-weight: 600;
+        color: #1a1a1a;
     }
 
     .list-group-item {
         border: none;
-        background-color: #fff;
+        background: #fff;
         border-bottom: 1px solid #e9ecef;
     }
 </style>
 
 <div class="container mt-5">
+    <!-- Welcome -->
     <h2 class="text-center text-success mb-4">Welcome, @username!</h2>
 
     <!-- Stats Cards -->
     <div class="row mb-4 text-white">
-        <div class="col-md-4">
-            <div class="card text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-primary">
                 <div class="card-body">
-                    <i class="bi bi-send-check-fill fs-2 text-primary"></i>
+                    <i class="bi bi-send-check-fill fs-2"></i>
                     <h5 class="card-title mt-2">Jobs Applied</h5>
                     <p class="display-6">@ViewBag.AppliedJobCount</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-secondary">
                 <div class="card-body">
-                    <i class="bi bi-chat-left-dots-fill fs-2 text-secondary"></i>
+                    <i class="bi bi-chat-left-dots-fill fs-2"></i>
                     <h5 class="card-title mt-2">Chats</h5>
                     <p class="display-6">@ViewBag.ChatCount</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-warning">
                 <div class="card-body">
-                    <i class="bi bi-calendar-check-fill fs-2 text-warning"></i>
+                    <i class="bi bi-calendar-check-fill fs-2"></i>
                     <h5 class="card-title mt-2">Events Registered</h5>
                     <p class="display-6">@ViewBag.EventRegisteredCount</p>
                 </div>
@@ -103,23 +95,22 @@
         <a asp-controller="Student" asp-action="Events" class="btn btn-primary me-2">
             View Upcoming Events
         </a>
-        <a asp-action="JobList" asp-controller="Student" class="btn btn-outline-secondary me-2">
+        <a asp-controller="Student" asp-action="JobList" class="btn btn-outline-secondary me-2">
             <i class="bi bi-briefcase-fill me-1"></i> Employer-Posted Jobs
         </a>
-        <a asp-action="AvailableSessions" asp-controller="Student" class="btn btn-outline-success me-2">
+        <a asp-controller="Student" asp-action="AvailableSessions" class="btn btn-outline-success me-2">
             <i class="bi bi-people-fill me-1"></i> Mentor Sessions
         </a>
-        <a asp-action="MyRegistrations" asp-controller="Student" class="btn btn-outline-warning">
+        <a asp-controller="Student" asp-action="MyRegistrations" class="btn btn-outline-warning">
             <i class="bi bi-list-check me-1"></i> My Session Requests
         </a>
     </div>
 
-    <!-- Flash messages -->
+    <!-- Flash Messages -->
     @if (TempData["Message"] != null)
     {
         <div class="alert alert-success">@TempData["Message"]</div>
     }
-
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-warning">@TempData["Error"]</div>
@@ -133,15 +124,24 @@
         <div class="card-body">
             <form method="get" asp-action="Index" class="row g-3">
                 <div class="col-md-4">
-                    <input type="text" name="searchQuery" class="form-control" placeholder="e.g. software engineer"
+                    <input type="text"
+                           name="searchQuery"
+                           class="form-control"
+                           placeholder="e.g. software engineer"
                            value="@Context.Request.Query["searchQuery"]" />
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="location" class="form-control" placeholder="Location"
+                    <input type="text"
+                           name="location"
+                           class="form-control"
+                           placeholder="Location"
                            value="@Context.Request.Query["location"]" />
                 </div>
                 <div class="col-md-2">
-                    <input type="number" name="minSalary" class="form-control" placeholder="Min Salary" />
+                    <input type="number"
+                           name="minSalary"
+                           class="form-control"
+                           placeholder="Min Salary" />
                 </div>
                 <div class="col-md-2">
                     <select name="posted" class="form-select">
@@ -163,7 +163,7 @@
     <!-- External Job Results -->
     @if (Model?.Any() == true)
     {
-        <h3>External Job Results</h3>
+        <h3>External Job Results (@Model.Count)</h3>
         <ul class="list-group mb-5">
             @foreach (var job in Model)
             {
@@ -179,11 +179,16 @@
                             </p>
                             <p class="full-description d-none">@job.Description</p>
                         </div>
-                        <form asp-action="Apply" asp-controller="Student" method="post" class="ms-3">
+                        <form asp-action="Apply"
+                              asp-controller="Student"
+                              method="post"
+                              class="ms-3">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="jobTitle" value="@job.Title" />
                             <input type="hidden" name="company" value="@job.CompanyName" />
-                            <button type="submit" class="btn btn-sm btn-success">Apply</button>
+                            <button type="submit" class="btn btn-sm btn-success">
+                                Apply
+                            </button>
                         </form>
                     </div>
                 </li>

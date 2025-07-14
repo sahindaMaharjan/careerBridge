@@ -43,6 +43,7 @@
                                     <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="BookMentor">Mentors</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Community" asp-action="Index">Community</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="SelectUser">Chat</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="Calendar">Calendar</a></li>
                                 }
                                 else if (User.IsInRole("Employer"))
                                 {
@@ -53,8 +54,8 @@
                                 }
                                 else if (User.IsInRole("Mentor"))
                                 {
-                                    <li class="nav-item"><a class="nav-link" asp-controller="Mentor" asp-action="Index">Dashboard</a></li>
-                                    <li class="nav-item"><a class="nav-link" asp-controller="MentorSessions" asp-action="Index">Sessions</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Mentor" asp-action="Dashboard">Dashboard</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-controller="Mentor" asp-action="Sessions">Sessions</a></li>
                                     <li class="nav-item"><a class="nav-link" asp-controller="Chat" asp-action="SelectUser">Chat</a></li>
                                 }
                                 else if (User.IsInRole("Admin"))

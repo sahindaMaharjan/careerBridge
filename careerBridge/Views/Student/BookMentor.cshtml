@@ -1,28 +1,36 @@
 ﻿@model List<careerBridge.Models.BookMentorViewModel>
 
-   <h1>List of Mentors</h1>
-<table>
-    @foreach (var mentor in Model)
-    {
-        <tr>
-            <td>
-                <a asp-action="MentorDetails" asp-route-id="@mentor.MentorID">
-                    @mentor.FullName
-                </a>
-            </td>
-            <td>
-                @if (mentor.Requested)
-                {
-                    <button disabled>Requested</button>
-                }
-                else
-                {
-                    <form asp-action="SendMentorRequest" method="post">
-                        <input type="hidden" name="mentorId" value="@mentor.MentorID" />
-                        <button type="submit">Request Mentor</button>
-                    </form>
-                }
-            </td>
-        </tr>
-    }
-</table>
+<div class="container mt-5">
+    <h1 class="mb-4">Available Mentors</h1>
+
+    <div class="row g-4">
+        @foreach (var mentor in Model)
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@mentor.FullName</h5>
+                        <p class="card-text text-muted mb-4">Expertise: @mentor.FullName’s area</p>
+                        <div class="mt-auto">
+                            @if (mentor.Requested)
+                            {
+                                <button class="btn btn-secondary w-100" disabled>
+                                    Requested
+                                </button>
+                            }
+                            else
+                            {
+                                <form asp-action="SendMentorRequest" method="post">
+                                    <input type="hidden" name="mentorId" value="@mentor.MentorID" />
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        Request Mentor
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
