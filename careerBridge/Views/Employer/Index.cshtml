@@ -1,36 +1,122 @@
 ﻿@model careerBridge.Models.EmployerDashboardViewModel
+@using Microsoft.AspNetCore.Identity
+@using careerBridge.Areas.Identity.Data
+@inject UserManager<careerBridgeUser> UserManager
+@inject SignInManager<careerBridgeUser> SignInManager
 
 @{
     ViewData["Title"] = "Employer Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var currentUser = await UserManager.GetUserAsync(User);
+    var username = currentUser?.Fullname ?? "Employer";
 }
 
-<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f9fbfd;
+    }
+
+    .card {
+        border-radius: 20px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        background-color: #ffffff;
+    }
+
+    .card-body {
+        padding: 2rem 1.5rem;
+    }
+
+    .card h5 {
+        font-weight: 600;
+    }
+
+    .display-6 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .btn {
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 0.6rem 1.4rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+    .btn-warning {
+        background-color: #ff9900;
+        border: none;
+    }
+
+    h3 {
+        color: #1a1a1a;
+        margin-top: 2rem;
+        font-weight: 600;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 1rem;
+    }
+
+    .list-group-item {
+        border: none;
+        background-color: #fff;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table th {
+        background-color: #f1f5f9;
+        color: #333;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+</style>
 
 <div class="container mt-5">
+    <h2 class="text-center text-success mb-4">Welcome, @username!</h2>
 
     <!-- Stats Cards -->
     <div class="row mb-4 text-white">
         <div class="col-md-4">
-            <div class="card bg-info text-center">
+            <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title">Jobs Posted</h5>
+                    <i class="bi bi-briefcase-fill fs-2 text-primary"></i>
+                    <h5 class="card-title mt-2">Jobs Posted</h5>
                     <p class="display-6">@Model.JobCount</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-secondary text-center">
+            <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title">Chats</h5>
+                    <i class="bi bi-chat-left-dots-fill fs-2 text-secondary"></i>
+                    <h5 class="card-title mt-2">Chats</h5>
                     <p class="display-6">@Model.ChatCount</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-warning text-center">
+            <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title">Events Posted</h5>
+                    <i class="bi bi-calendar-event-fill fs-2 text-warning"></i>
+                    <h5 class="card-title mt-2">Events Posted</h5>
                     <p class="display-6">@Model.EventCount</p>
                 </div>
             </div>
@@ -39,15 +125,15 @@
 
     <!-- Quick Actions -->
     <div class="row mb-5">
-        <div class="col text-end">
-            <a asp-controller="Employer" asp-action="PostJob" class="btn btn-lg btn-primary me-2">
-                <i class="bi bi-plus-circle"></i> Post New Job
+        <div class="col text-center">
+            <a asp-controller="Employer" asp-action="PostJob" class="btn btn-primary me-2">
+                <i class="bi bi-plus-circle me-1"></i> Post New Job
             </a>
-            <a asp-controller="Chat" asp-action="Index" class="btn btn-lg btn-secondary me-2">
-                <i class="bi bi-chat-dots"></i> Chat with Students
+            <a asp-controller="Chat" asp-action="Index" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-chat-dots me-1"></i> Chat with Students
             </a>
-            <a asp-controller="Event" asp-action="Index" class="btn btn-lg btn-warning">
-                <i class="bi bi-calendar-plus"></i> Post Event
+            <a asp-controller="Employer" asp-action="PostEvent" class="btn btn-warning text-white">
+                <i class="bi bi-calendar-plus me-1"></i> Post Event
             </a>
         </div>
     </div>
@@ -57,7 +143,7 @@
         <div class="col">
             <h3>Your Job Listings</h3>
             <table class="table table-hover mt-3">
-                <thead class="table-light">
+                <thead>
                     <tr><th>Title</th><th>Posted On</th><th>Applicants</th><th>Status</th><th></th></tr>
                 </thead>
                 <tbody>
@@ -67,7 +153,11 @@
                             <td>@job.Title</td>
                             <td>@job.PostedOn:MMM d, yyyy</td>
                             <td>@job.ApplicantCount</td>
-                            <td><span class="badge @(job.IsOpen?"bg-primary":"bg-secondary")">@(job.IsOpen ? "Open" : "Closed")</span></td>
+                            <td>
+                                <span class="badge @(job.IsOpen ? "bg-primary" : "bg-secondary")">
+                                    @(job.IsOpen ? "Open" : "Closed")
+                                </span>
+                            </td>
                             <td>
                                 <a asp-action="Details" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-sm btn-outline-secondary">View</a>
                                 @if (job.IsOpen)
@@ -87,7 +177,7 @@
         <div class="col">
             <h3>Your Events</h3>
             <table class="table table-hover mt-3">
-                <thead class="table-light">
+                <thead>
                     <tr><th>Event</th><th>Date</th><th>Registrations</th><th></th></tr>
                 </thead>
                 <tbody>
@@ -97,7 +187,9 @@
                             <td>@ev.Name</td>
                             <td>@ev.Date:MMM d, yyyy</td>
                             <td>@ev.RegistrationCount</td>
-                            <td><a asp-action="Details" asp-controller="Event" asp-route-id="@ev.Id" class="btn btn-sm btn-outline-secondary">View</a></td>
+                            <td>
+                                <a asp-action="Details" asp-controller="Event" asp-route-id="@ev.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -113,12 +205,15 @@
                 @foreach (var chat in Model.RecentChats)
                 {
                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><h5 class="mb-1">@chat.StudentName</h5><p class="mb-1">“@chat.LastMessageSnippet…”</p><small class="text-muted">@chat.LastMessageTime:g</small></div>
+                        <div>
+                            <h5 class="mb-1">@chat.StudentName</h5>
+                            <p class="mb-1">“@chat.LastMessageSnippet”</p>
+                            <small class="text-muted">@chat.LastMessageTime:g</small>
+                        </div>
                         <a asp-action="Conversation" asp-controller="Chat" asp-route-withUser="@chat.StudentId" class="btn btn-sm btn-outline-primary">Continue →</a>
                     </div>
                 }
             </div>
         </div>
     </div>
-
 </div>

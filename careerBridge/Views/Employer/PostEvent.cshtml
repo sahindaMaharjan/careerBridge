@@ -1,38 +1,68 @@
-﻿@model careerBridge.Models.JobListing
+﻿@model careerBridge.Models.Event
 
 @{
-    ViewBag.Title = "Post a Job";
+    ViewBag.Title = "Post an Event";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Post a Job</h2>
+<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/flatly/bootstrap.min.css" rel="stylesheet" />
 
-@using (Html.BeginForm("Create", "JobListings", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Post a New Event</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("PostEvent", "Employer", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Title)
-        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter job title" })
-        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Title, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter event title" })
+                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Description, new { @class = "form-label" })
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5, placeholder = "Enter event description" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.Location, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter event location" })
+                            @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(m => m.EventDate, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.EventDate, new { @class = "form-control", type = "datetime-local" })
+                            @Html.ValidationMessageFor(m => m.EventDate, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
+                            @Html.LabelFor(m => m.IsActive, new { @class = "form-check-label" })
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-calendar-plus"></i> Post Event
+                            </button>
+                            <a asp-action="Index" asp-controller="Employer" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Description)
-        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5, placeholder = "Enter job description" })
-        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Location)
-        @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter job location" })
-        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Salary)
-        @Html.TextBoxFor(m => m.Salary, new { @class = "form-control", placeholder = "Enter salary (optional)" })
-        @Html.ValidationMessageFor(m => m.Salary, "", new { @class = "text-danger" })
-    </div>
-
-    <button type="submit" class="btn btn-primary">Post Job</button>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

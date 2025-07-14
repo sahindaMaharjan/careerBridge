@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace careerBridge.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:careerBridge/Migrations/20250714050258_newmigartion.cs
-    public partial class newmigartion : Migration
-========
-    public partial class final : Migration
->>>>>>>> 065301d82e1097fc32fa4502a40be8fdc116839c:careerBridge/Migrations/20250714041830_final.cs
+    public partial class newmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -263,10 +259,10 @@ namespace careerBridge.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Salary = table.Column<int>(type: "int", nullable: false),
-                    Location = table.Column<int>(type: "int", nullable: false),
-                    PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOpen = table.Column<bool>(type: "bit", nullable: false),
+                    PostedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EmployerID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -286,10 +282,11 @@ namespace careerBridge.Migrations
                 {
                     EventID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     MentorID = table.Column<int>(type: "int", nullable: false),
                     EmployerProfileEmployerID = table.Column<int>(type: "int", nullable: true)
                 },

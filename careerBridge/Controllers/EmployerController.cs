@@ -127,5 +127,29 @@ namespace careerBridge.Controllers
         {
             return View();
         }
+
+        // === GET: PostEvent ===
+        [HttpGet]
+        public IActionResult PostEvent()
+        {
+            return View();
+        }
+
+        // === POST: PostEvent ===
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PostEvent(Event model)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Events.Add(model);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Event posted successfully!";
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
+        }
     }
 }
