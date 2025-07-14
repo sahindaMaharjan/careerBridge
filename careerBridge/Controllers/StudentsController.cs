@@ -30,47 +30,7 @@ namespace careerBridge.Controllers
         }
 
         // EVENT LIST USING EVENTBRITE API
-        [HttpGet]
-        public async Task<IActionResult> EventList(string keyword, string location, string startDate, string endDate)
-        {
-            using var client = new HttpClient();
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _eventbriteToken);
-
-            // Build query parameters for Eventbrite API
-            var queryParams = new List<string>();
-
-            if (!string.IsNullOrEmpty(keyword))
-                queryParams.Add($"q={Uri.EscapeDataString(keyword)}");
-
-            if (!string.IsNullOrEmpty(location))
-                queryParams.Add($"location.address={Uri.EscapeDataString(location)}");
-
-            if (!string.IsNullOrEmpty(startDate))
-                queryParams.Add($"start_date.range_start={Uri.EscapeDataString(startDate)}");
-
-            if (!string.IsNullOrEmpty(endDate))
-                queryParams.Add($"start_date.range_end={Uri.EscapeDataString(endDate)}");
-
-            var url = "https://www.eventbriteapi.com/v3/events/search/";
-
-            if (queryParams.Count > 0)
-                url += "?" + string.Join("&", queryParams);
-
-            var response = await client.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                TempData["Error"] = $"Error fetching events: {response.StatusCode}";
-                return View(new List<EventItem>());
-            }
-
-            // Deserialize into typed classes
-            var result = JsonConvert.DeserializeObject<eventbriteResponse>(json);
-
-            return View(result?.events ?? new List<EventItem>());
-        }
+        [HttpGet]       
 
 
         // JOB LIST FROM EXTERNAL API

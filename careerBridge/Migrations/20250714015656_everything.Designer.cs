@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250713215010_new")]
-    partial class @new
+    [Migration("20250714015656_everything")]
+    partial class everything
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,6 +181,67 @@ namespace careerBridge.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Reply", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RepliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Replies");
                 });
 
             modelBuilder.Entity("careerBridge.Areas.Identity.Data.careerBridgeUser", b =>
@@ -609,6 +670,36 @@ namespace careerBridge.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Post", b =>
+                {
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Reply", b =>
+                {
+                    b.HasOne("Post", "Post")
+                        .WithMany("Replies")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("careerBridge.Models.EmployerProfile", b =>
                 {
                     b.HasOne("careerBridge.Areas.Identity.Data.careerBridgeUser", "User")
@@ -749,6 +840,11 @@ namespace careerBridge.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Post", b =>
+                {
+                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("careerBridge.Areas.Identity.Data.careerBridgeUser", b =>
