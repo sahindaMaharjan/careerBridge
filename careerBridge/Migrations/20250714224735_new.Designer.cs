@@ -12,8 +12,8 @@ using careerBridge.Areas.Identity.Data;
 namespace careerBridge.Migrations
 {
     [DbContext(typeof(careerBridgeDb))]
-    [Migration("20250714170803_newmigration")]
-    partial class newmigration
+    [Migration("20250714224735_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -427,8 +427,15 @@ namespace careerBridge.Migrations
                     b.Property<DateTime>("AppliedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CoverLetter")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("JobListingID")
                         .HasColumnType("int");
+
+                    b.Property<string>("ResumePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -465,6 +472,9 @@ namespace careerBridge.Migrations
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxApplicants")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PostedOn")
                         .HasColumnType("datetime2");
